@@ -26,13 +26,28 @@ function ctcex_get_sermon_data( $post_id, $default_img = '' ){
 	return $CTCEX->get_sermon_data( $post_id, $default_img ); 
 }
 function ctcex_get_event_data( $post_id ){
+	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_event_data( $post_id ); 
 }
 function ctcex_get_location_data( $post_id ){
+	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_location_data( $post_id ); 
 }
 function ctcex_get_person_data( $post_id ){
+	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_person_data( $post_id ); 
+}
+function ctcex_get_recurrence_note( $post_obj ){
+	global $CTCEX;
+	if( $CTCEX ) return $CTCEX->get_recurrence_note( $post_obj ); 
+}
+
+function ctcex_get_option( $option, $default = '' ){
+	$options = get_option( 'ctcex_settings' );
+	if( $options[ $option ] )
+		return $options[ $option ];
+	else
+		return $default;
 }
 
 function ctcex_tax_img_url( $term_id = NULL ) {

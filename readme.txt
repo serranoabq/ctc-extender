@@ -21,4 +21,5 @@ Please see [Installing Plugins](http://codex.wordpress.org/Managing_Plugins#Inst
 
 == Changelog ==
 
-1.0 - Initial version
+1.0   - Initial version
+1.0.1 - Bugfixes

@@ -18,4 +18,5 @@ CTC Extender requires the [Church Theme Content Plugin](http://wordpress.org/plu
 Changelog
 ---------
 
-* 1.0 - Initial version
+* 1.0   - Initial version
+* 1.0.1 - Bug fixes

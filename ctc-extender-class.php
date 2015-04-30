@@ -8,9 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 if ( ! class_exists( 'CTC_Extender' ) ) {
 	class CTC_Extender { 
 		
-		public function __construct() {
+		function __construct() {
 			// Version 
-			$this->version = '1.0';
+			$this->version = '1.0.1';
 			
 			// Church Theme Content is REQUIRED
 			if ( ! class_exists( 'Church_Theme_Content' ) ) return;
@@ -97,7 +97,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 				'permalink'   => $permalink,
 				'img'         => $img,
 				'default_used'=> $default_used,
-				'title'       => get_the_title( $post_id ),
+				'name'        => get_the_title( $post_id ),
 				'series'      => $ser_series,
 				'series_slug' => $ser_series_slug,
 				'series_link' => $ser_series_link,
@@ -112,7 +112,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 			return $data;
 		}
 
-		public function get_event_data( $post_id ){
+		function get_event_data( $post_id ){
 			if( empty( $post_id ) ) return;
 			
 			$permalink = get_permalink( $post_id );
@@ -166,7 +166,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		}
 
 		// Get location data for use in templates
-		public function get_location_data( $post_id ){
+		function get_location_data( $post_id ){
 			$permalink = get_permalink( $post_id );
 			$img = get_post_meta( $post_id, '_ctc_image' , true ); 
 			
@@ -200,7 +200,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		}
 
 		// Get person data for use in templates
-		public function harvest_get_person_data( $post_id ){
+		function get_person_data( $post_id ){
 			if( empty( $post_id ) ) return;
 			
 			$permalink = get_permalink( $post_id );
@@ -231,7 +231,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		// A default image can be given through the ctc_sermon_image 
 		// filter, if not an image attached to the post is used.
 		// Finally, if a taxonomy image is specified, then 
-		public function save_sermon_image( $post_id ){
+		function save_sermon_image( $post_id ){
 			$img = apply_filters( 'ctc_sermon_image', '' );
 			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-wide' ); 
 			if( $thumbnail ) $img = $thumbnail[0];
@@ -249,7 +249,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		// Apply an image to a ctc_event post as meta data. 
 		// A default map is used, followed by an image given through the 
 		// ctc_event_image filter, then an image attached to the post directly
-		public function save_event_image( $post_id ){
+		function save_event_image( $post_id ){
 			// Check for an event address image
 			$address = get_post_meta( $post_id, '_ctc_event_address' , true ); 
 			$address_url = urlencode( 'New York' );
@@ -268,7 +268,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		// Apply an image to a ctc_location post as meta data. 
 		// A default map is used, followed by an image given through the 
 		// ctc_location_image filter, then an image attached to the post directly
-		public function save_location_image( $post_id ){
+		function save_location_image( $post_id ){
 			// Check for an event address image
 			$address = get_post_meta( $post_id, '_ctc_location_address' , true ); 
 			$address_url = urlencode(  'New York' );
@@ -288,7 +288,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		// Apply an image to a ctc_person post.
 		// Order is plugin folder, an image given through the ctc_person_image filter, or
 		// an image attached to the person post
-		public function save_person_image( $post_id ){
+		function save_person_image( $post_id ){
 			$img = plugin_dir_url( __FILE__ ) . '/images/user.png';
 			$img = apply_filters( 'ctc_person_image', $img );
 			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-wide' ); 
@@ -302,7 +302,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		CTC new Event features
 *********************************************/		
 	// New event metaboxes
-		public function metabox_filter_event_date( $meta_box ) {
+		function metabox_filter_event_date( $meta_box ) {
 			// With the exception of daily recurrence, the other settings 
 			// are included in the CTC plugin, but are not exposed by default. 
 			
@@ -386,13 +386,13 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		}
 
 		// Update the recurrence note on the Events listing
-		public function column_recurrence_note( $recurrence_note, $args ){
+		function column_recurrence_note( $recurrence_note, $args ){
 			extract( $args );
 			return $this->get_recurrence_note( $post );
 		}
 
 		// This helper is used to get an expression for recurrence
-		public function get_recurrence_note( $post_obj ) {
+		function get_recurrence_note( $post_obj ) {
 			if( !isset( $post_obj ) )
 				global $post;
 			else
@@ -459,7 +459,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		// Unfortunately, CTC plugin does not provide a filter, so this is a rewrite
 		// of the original function. It could be filtered if the query allowed additional
 		// values in the recurrence
-		public function update_recurring_event_dates() {
+		function update_recurring_event_dates() {
 
 			// Get all events with end date in past and have valid recurring value
 			$events_query = new WP_Query( array(
