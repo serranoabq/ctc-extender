@@ -16,8 +16,6 @@ This plugin is intended to help individuals and churches using the features of t
 
 Please see [Installing Plugins](http://codex.wordpress.org/Managing_Plugins#Installing_Plugins) in the WordPress Codex.
 
-== Screenshots ==
-
 
 == Changelog ==
 
