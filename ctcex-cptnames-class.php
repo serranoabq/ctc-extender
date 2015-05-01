@@ -168,9 +168,9 @@ if( ! class_exists( 'CTCEX_CPTNames' ) ) {
 		
 			if ( ! isset( $_POST['reset'] ) ) {
 				$options = get_option( 'ctcex_settings' );
-				flush_rewrite_rules();
 				return $input;
 			}
+			flush_rewrite_rules();
 			return false;		
 	}
 		
