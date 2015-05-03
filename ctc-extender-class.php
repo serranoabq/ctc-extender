@@ -289,9 +289,9 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		// Order is plugin folder, an image given through the ctc_person_image filter, or
 		// an image attached to the person post
 		function save_person_image( $post_id ){
-			$img = plugin_dir_url( __FILE__ ) . '/images/user.png';
+			$img = plugin_dir_url( __FILE__ ) . 'user.png';
 			$img = apply_filters( 'ctc_person_image', $img );
-			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-wide' ); 
+			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-tall' ); 
 			if( $thumbnail ) $img = $thumbnail[0];
 			
 			update_post_meta( $post_id, '_ctc_image', $img );
