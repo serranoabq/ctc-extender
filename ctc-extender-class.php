@@ -122,7 +122,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 			$start = get_post_meta( $post_id, '_ctc_event_start_date' , true ); 
 			$end = get_post_meta( $post_id, '_ctc_event_end_date' , true ); 
 			$time = get_post_meta( $post_id, '_ctc_event_start_time' , true );
-			if( $time ) $time = date('g:ia', $time );
+			if( $time ) $time = date('g:ia', strtotime( $time ) );
 			$recurrence = get_post_meta( $post_id, '_ctc_event_recurrence' , true ); 
 			$recurrence_note = harvest_get_recurrence_note( get_post( $post_id ) );
 			$venue = get_post_meta( $post_id, '_ctc_event_venue' , true ); 
