@@ -2,7 +2,7 @@
 /*
     Plugin Name: CTC Extender
     Description: Plugin to supplement the Church Theme Content plugin by adding additional features. Requires <strong>Church Theme Content</strong> plugin.
-    Version: 1.0.2
+    Version: 1.0.1
     Author: Justin R. Serrano
 */
 
