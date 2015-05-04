@@ -174,10 +174,9 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 			$address = get_post_meta( $post_id, '_ctc_location_address' , true ); 
 			$phone = get_post_meta( $post_id, '_ctc_location_phone' , true ); 
 			$times = get_post_meta( $post_id, '_ctc_location_times' , true ); 
-			$image = get_post_meta( $post_id, '_ctc_image' , true ); 
 			$slider = get_post_meta( $post_id, '_ctc_location_slider' , true ); 
 			
-			$address_url = urlencode( harvest_option( 'city', 'Albuquerque' ) );
+			$address_url = urlencode( 'Albuquerque' );
 			if( $address )  $address_url = urlencode( $address ); 
 			$map_img_url = "https://maps.googleapis.com/maps/api/staticmap?size=640x360&zoom=15&scale=2&center=$address_url&style=saturation:-25&markers=color:orange|$address_url";
 			$map_url = "http://maps.google.com/maps?q=$address_url";
@@ -271,7 +270,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		function save_location_image( $post_id ){
 			// Check for an event address image
 			$address = get_post_meta( $post_id, '_ctc_location_address' , true ); 
-			$address_url = urlencode(  'New York' );
+			$address_url = urlencode(  'Albuquerque' );
 			if( $address )  $address_url = urlencode( $address ); 
 			$map_img_url = "https://maps.googleapis.com/maps/api/staticmap?size=640x360&zoom=15&scale=2&center=$address_url&style=saturation:-25&markers=color:orange|$address_url";
 			$img = $map_img_url;
