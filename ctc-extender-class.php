@@ -10,7 +10,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		
 		function __construct() {
 			// Version 
-			$this->version = '1.0.2';
+			$this->version = '1.0.1';
 			
 			// Church Theme Content is REQUIRED
 			if ( ! class_exists( 'Church_Theme_Content' ) ) return;
