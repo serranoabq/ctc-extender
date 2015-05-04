@@ -21,3 +21,4 @@ Please see [Installing Plugins](http://codex.wordpress.org/Managing_Plugins#Inst
 
 1.0   - Initial version
 1.0.1 - Bugfixes
+1.0.2 - Bugfixes
