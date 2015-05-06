@@ -5,9 +5,11 @@
 // No direct access
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if( class_exists( 'CT_Recurrence' ) ) {
+//if( class_exists( 'CT_Recurrence' ) ) {
 	
 	class CTCEX_Recurrence extends CT_Recurrence {
+		public $version;
+		
 		public function __construct() {
 			// Version
 			$this->version = '0.9.1';
@@ -295,4 +297,4 @@ var_dump( $date );
 			return $date;
 		}
 	}
-}
+//}

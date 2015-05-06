@@ -11,6 +11,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		function __construct() {
 			// Version 
 			$this->version = '1.0.2';
+			add_action('init', array( &$this, 'add_recurrence'), 10 );
 			
 			// Church Theme Content is REQUIRED
 			if ( ! class_exists( 'Church_Theme_Content' ) ) return;
@@ -44,6 +45,10 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 			
 		}
 		
+		function add_recurrence(){
+			if( !class_exists( 'CTCEX_Recurrence' ) )
+				require_once( sprintf( "%s/ctcex-recurrence-class.php", dirname(__FILE__) ) );
+		}
 /********************************************		
 		CTC data shortcuts
 *********************************************/
@@ -459,7 +464,7 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 		// of the original function. It could be filtered if the query allowed additional
 		// values in the recurrence
 		function update_recurring_event_dates() {
-
+			$this->add_recurrence();
 			// Get all events with end date in past and have valid recurring value
 			$events_query = new WP_Query( array(
 				'post_type'	=> 'ctc_event',
@@ -472,11 +477,11 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 						'compare' => '<', // earlier than today
 						'type' => 'DATE',
 					 ),
-					array(
+					/*array(
 						'key' => '_ctc_event_recurrence',
 						'value' => 'none', 
 						'compare' => '!=',
-					 )
+					 )*/
 				)
 			) );
 
@@ -494,6 +499,8 @@ if ( ! class_exists( 'CTC_Extender' ) ) {
 
 					// Get recurrence
 					$recurrence = get_post_meta( $post->ID, '_ctc_event_recurrence', true );
+					if( 'none' == $recurrencce ) continue;
+					
 					$recurrence_end_date = get_post_meta( $post->ID, '_ctc_event_recurrence_end_date', true );
 					
 					// CHANGE: New recurrence parameters

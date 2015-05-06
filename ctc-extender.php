@@ -8,19 +8,15 @@
 
 // No direct access
 if ( !defined( 'ABSPATH' ) ) exit;
-global $CTCEX;
 
 require_once( sprintf( "%s/ctcex-full-calendar-class.php", dirname(__FILE__) ) );
-require_once( sprintf( "%s/ctcex-recurrence-class.php", dirname(__FILE__) ) );
 require_once( sprintf( "%s/ctcex-taximages-class.php", dirname(__FILE__) ) );
 require_once( sprintf( "%s/ctcex-cptnames-class.php", dirname(__FILE__) ) );
 require_once( sprintf( "%s/ctc-extender-class.php", dirname(__FILE__) ) );
 
+global $CTCEX;
 if( class_exists( 'CTC_Extender' ) ) {
 	$CTCEX = new CTC_Extender();
-	if( is_user_logged_in() ){
-		$CTCEX->update_recurring_event_dates(); 
-	}
 }
 
 // public shortcuts to some class features 
@@ -44,7 +40,10 @@ function ctcex_get_recurrence_note( $post_obj ){
 	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_recurrence_note( $post_obj ); 
 }
-
+function ctcex_update_recurring_events(){
+	global $CTCEX;
+	$CTCEX->update_recurring_event_dates(); 
+}
 function ctcex_get_option( $option, $default = '' ){
 	$options = get_option( 'ctcex_settings' );
 	if( $options[ $option ] )
