@@ -25,6 +25,7 @@ function ctcex_get_sermon_data( $post_id, $default_img = '' ){
 	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_sermon_data( $post_id, $default_img ); 
 }
+
 // Get event data
 // @param string $post_id ID of post to retrieve data from
 // @return array An array of the event data
@@ -32,6 +33,7 @@ function ctcex_get_event_data( $post_id ){
 	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_event_data( $post_id ); 
 }
+
 // Get location data
 // @param string $post_id ID of post to retrieve data from
 // @return array An array of the event data
@@ -39,6 +41,7 @@ function ctcex_get_location_data( $post_id ){
 	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_location_data( $post_id ); 
 }
+
 // Get person data
 // @param string $post_id ID of post to retrieve data from
 // @return array An array of the event data
@@ -58,6 +61,7 @@ function ctcex_update_recurring_events(){
 	global $CTCEX;
   if( $CTCEX ) $CTCEX->update_recurring_event_dates(); 
 }
+
 // Get option data
 // @param string $option Name of option to retrieve value
 // @param string $default Default value to return if option is not found

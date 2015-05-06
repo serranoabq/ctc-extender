@@ -469,7 +469,11 @@ class CTC_Extender {
 	// of the original function. It could be filtered if the query allowed additional
 	// values in the recurrence
 	function update_recurring_event_dates() {
+		if( ! class_exists( 'CTCEX_Recurrence' ) ) 
+			require_once( sprintf( "%s/ctcex-recurrence-class.php", dirname(__FILE__) ) );
 		
+		if( ! class_exists( 'CTCEX_Recurrence' ) ) return;
+			
 		// Get all events with end date in past and have valid recurring value
 		$events_query = new WP_Query( array(
 			'post_type'	=> 'ctc_event',
