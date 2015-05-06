@@ -18,6 +18,8 @@ require_once( sprintf( "%s/ctc-extender-class.php", dirname(__FILE__) ) );
 
 if( class_exists( 'CTC_Extender' ) ) {
 	$CTCEX = new CTC_Extender();
+	if( is_user_logged_in() ){
+	}
 }
 
 // public shortcuts to some class features 
