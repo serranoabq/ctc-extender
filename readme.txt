@@ -10,7 +10,7 @@ Provides users of the [Church Theme Content Plugin](http://wordpress.org/plugins
 
 == Description ==
 
-This plugin is intended to help individuals and churches using the features of the [Church Theme Content plugin](http://wordpress.org/plugins/church-theme-content/) to take more control over the CTC content. 
+This plugin is intended to help individuals and churches using the features of the [Church Theme Content plugin](http://wordpress.org/plugins/church-theme-content/) to take more control over the CTC content. The plugin adds custom event recurrence, a calendar shortcode, custom post type names, and additional helper functions for use in themes to retrieve CTC-specific data.  
 
 == Installation ==
 
@@ -20,5 +20,6 @@ Please see [Installing Plugins](http://codex.wordpress.org/Managing_Plugins#Inst
 == Changelog ==
 
 1.0   - Initial version
-1.0.1 - Bugfixes
-1.0.2 - Bugfixes
+1.0.1 - Bug fixes
+1.0.2 - Bug fixes
+1.1   - Bug fixes with recurrence.

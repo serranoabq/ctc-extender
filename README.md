@@ -21,3 +21,4 @@ Changelog
 * 1.0   - Initial version
 * 1.0.1 - Bug fixes
 * 1.0.2 - Bug fixes
+* 1.1   - Bug fixes with recurrence
