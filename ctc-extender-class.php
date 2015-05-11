@@ -63,7 +63,7 @@ class CTC_Extender {
 		
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
-		$default_used = ( $img === $default_img ) && !empty( $img );
+		$default_used = ( $img == $default_img ) && !empty( $img );
 		
 		// Sermon data
 		$video = get_post_meta( $post_id, '_ctc_sermon_video' , true ); 
