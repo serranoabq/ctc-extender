@@ -260,15 +260,16 @@ class CTC_Extender {
 	// ctc_event_image filter, then an image attached to the post directly
 	function save_event_image( $post_id ){
 		// Check for an event address image
+		$img = apply_filters( 'ctc_event_image', '' );
 		$address = get_post_meta( $post_id, '_ctc_event_address' , true ); 
 		$address_url = urlencode( 'New York' );
-		if( $address )  $address_url = urlencode( $address ); 
-		$map_img_url = "https://maps.googleapis.com/maps/api/staticmap?size=640x360&zoom=15&scale=2&center=$address_url&style=saturation:-25&markers=color:orange|$address_url";
-		$img = $map_img_url;
+		if( $address || empty( $img ) )  {
+			$address_url = urlencode( $address ); 
+			$map_img_url = "https://maps.googleapis.com/maps/api/staticmap?size=640x360&zoom=15&scale=2&center=$address_url&style=saturation:-25&markers=color:orange|$address_url";
+			$img = $map_img_url;
+		}
 		
-		$img = apply_filters( 'ctc_event_image', $img );
 		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-wide' ); 
-		
 		if( $thumbnail ) $img = $thumbnail[0];
 		
 		if( $img ) update_post_meta( $post_id, '_ctc_image', $img );
