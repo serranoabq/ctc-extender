@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class CTCEX_FullCalendar {
 	
 	function __construct() {
-		$this->version = '1.1'; 
+		$this->version = '1.2'; 
 		
 		// Church Theme Content is REQUIRED
 		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
@@ -27,6 +27,8 @@ class CTCEX_FullCalendar {
 	 *     breaks = '(med_break), (small_break)' 
 	 *       Widths to change from month view to basicWeek and from basicWeek to basicDay when $view is empty or 'responsive'
 	 *       Default is '770,600'
+	 *     category = (string)
+	 *       Category slug to show
 	 *     max_recur = (integer)
 	 *       Maximum number of recurrences to display. 0 only shows the first event. Default is 12
 	 *     max_events = (integer)
@@ -49,6 +51,7 @@ class CTCEX_FullCalendar {
 		extract( shortcode_atts( array(
 			'view'			=>  '',  
 			'breaks' 		=>  '770,600',  
+			'category' 	=>  '',  
 			'max_recur'	=>  12, // this is enough for most cases
 			'max_events'=>  100,
 			'before'    =>  '',
@@ -87,6 +90,17 @@ class CTCEX_FullCalendar {
 				),
 			), 
 		) ; 
+		
+		if( !empty( $category ) )  {
+			$query[ 'tax_query' ] = array( 
+				array(
+					'taxonomy'  => 'ctc_event_category',
+					'field'     => 'slug',
+					'terms'     => $category,
+				),
+			);
+		}
+		
 		$posts = new WP_Query();
 		$posts -> query($query); 
 		
@@ -227,7 +241,7 @@ class CTCEX_FullCalendar {
 						
 						// make the new date
 						$new_start_date = date( 'Y-m-d', mktime( 0, 0, 0, $m, $d, $y ) );
-						$new_end_date = date( 'Y-m-d', strtotime( $new_startdate ) + $eventlen );
+						$new_end_date = date( 'Y-m-d', strtotime( $new_start_date ) + $eventlen );
 						
 						// stop if new date is past the recurrence end date
 						if( strtotime( $new_start_date ) > strtotime( $recurrence_end ) ) break;
