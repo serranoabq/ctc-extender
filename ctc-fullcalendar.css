@@ -4,4 +4,8 @@
 #ctc-fullcalendar .fc-header, #ctc-fullcalendar .fc-header   *{
 	border: 0px;
 }
+.fc-content{
+	white-space: normal !important;
+}
+
 

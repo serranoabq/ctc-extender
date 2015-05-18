@@ -10,6 +10,9 @@ jQuery(document).ready( function() {
 		jQuery( '#ctc-fullcalendar' ).fullCalendar({
 			defaultView: fixedView ? fixedView : (ww < breaks[0] ? (ww < breaks[1] ? 'basicDay' : 'basicWeek' ) : 'month' ),
 			events: events,
+			eventRender: function( event, element ){
+				element.find('.fc-title').html(event.title);
+			},
 			windowResize: function( view ){
 				if ( fixedView ) return;
 				var ww = jQuery( '#ctc-fullcalendar' ).width();
