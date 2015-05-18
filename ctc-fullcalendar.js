@@ -13,6 +13,7 @@ jQuery(document).ready( function() {
 			eventRender: function( event, element ){
 				element.find('.fc-title').html(event.title);
 			},
+			height: "auto",
 			windowResize: function( view ){
 				if ( fixedView ) return;
 				var ww = jQuery( '#ctc-fullcalendar' ).width();
