@@ -23,3 +23,4 @@ Please see [Installing Plugins](http://codex.wordpress.org/Managing_Plugins#Inst
 1.0.1 - Bug fixes
 1.0.2 - Bug fixes
 1.1   - Bug fixes with recurrence.
+1.2   - Add category option to full calendar
