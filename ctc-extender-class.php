@@ -484,7 +484,7 @@ class CTC_Extender {
 				array(
 					'key' => '_ctc_event_end_date',
 					'type' => 'DATE',
-					'compare' => '<=', // earlier than 
+					'compare' => '<', // earlier than 
 					'value' => date_i18n( 'Y-m-d' ), // today localized
 				 ),
 				/*array(
