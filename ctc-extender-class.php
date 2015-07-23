@@ -134,7 +134,7 @@ class CTC_Extender {
 		$time = get_post_meta( $post_id, '_ctc_event_start_time' , true );
 		if( $time ) $time = date('g:ia', strtotime( $time ) );
 		$recurrence = get_post_meta( $post_id, '_ctc_event_recurrence' , true ); 
-		$recurrence_note = harvest_get_recurrence_note( get_post( $post_id ) );
+		$recurrence_note = $this->get_recurrence_note( get_post( $post_id ) );
 		$venue = get_post_meta( $post_id, '_ctc_event_venue' , true ); 
 		$address = get_post_meta( $post_id, '_ctc_event_address' , true ); 
 		
@@ -412,6 +412,7 @@ class CTC_Extender {
 		$recurrence = get_post_meta( $post->ID , '_ctc_event_recurrence' , true );
 		if( $recurrence == 'none' ) return '';
 		
+		$recurrence_end_date = get_post_meta( $post->ID, '_ctc_event_recurrence_end_date', true );
 		$recurrence_period = get_post_meta( $post->ID , '_ctc_event_recurrence_period' , true );
 		$recurrence_monthly_type = get_post_meta( $post->ID , '_ctc_event_recurrence_monthly_type' , true );
 		$recurrence_monthly_week = get_post_meta( $post->ID , '_ctc_event_recurrence_monthly_week' , true );
@@ -461,6 +462,9 @@ class CTC_Extender {
 			}
 		}
 		
+		if( $recurrence_end_date ) {
+			$recurrence_note .= sprintf( ' until %s', date_i18n( 'D, M jS' , strtotime( $recurrence_end_date ) ) );
+		}
 		return $recurrence_note;
 	}
 
