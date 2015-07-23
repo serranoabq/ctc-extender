@@ -134,7 +134,7 @@ class CTC_Extender {
 		$time = get_post_meta( $post_id, '_ctc_event_start_time' , true );
 		$endtime = get_post_meta( $post_id, '_ctc_event_end_time' , true );
 		if( $time ) $time = date('g:ia', strtotime( $time ) );
-		if( $endtime && $time) $time .= ' - ' . date('g:ia', strtotime( $endtime ) );
+		if( $endtime && $time) $endtime = date('g:ia', strtotime( $endtime ) );
 		$recurrence = get_post_meta( $post_id, '_ctc_event_recurrence' , true ); 
 		$recurrence_note = $this->get_recurrence_note( get_post( $post_id ) );
 		$venue = get_post_meta( $post_id, '_ctc_event_venue' , true ); 
@@ -167,6 +167,7 @@ class CTC_Extender {
 			'start'            => $start,
 			'end'              => $end,
 			'time'             => $time,
+			'endtime'             => $endtime,
 			'recurrence'       => $recurrence,
 			'recurrence_note'  => $recurrence_note,
 			'map_url'		       => $map_url,
