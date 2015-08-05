@@ -13,18 +13,18 @@ class CTCEX_CPTNames {
 		// Church Theme Content is REQUIRED
 		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
 		
-		add_action( 'admin_menu', array( &$this, 'add_admin_menu' ) );
-		add_action( 'admin_init', array( &$this, 'settings_init' ) );
+		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+		add_action( 'admin_init', array( $this, 'settings_init' ) );
 		
 		// Change slugs in the custom CTC types
-		add_filter( 'ctc_post_type_person_args', array( &$this, 'ctc_slugs' ), 10, 1);
-		add_filter( 'ctc_post_type_sermon_args', array( &$this, 'ctc_slugs' ), 10, 1);
-		add_filter( 'ctc_post_type_location_args', array( &$this,'ctc_slugs' ), 10, 1);
-		add_filter( 'ctc_taxonomy_sermon_series_args', array( &$this,'ctc_slugs' ), 10, 1);
+		add_filter( 'ctc_post_type_person_args', array( $this, 'ctc_slugs' ), 10, 1);
+		add_filter( 'ctc_post_type_sermon_args', array( $this, 'ctc_slugs' ), 10, 1);
+		add_filter( 'ctc_post_type_location_args', array( $this,'ctc_slugs' ), 10, 1);
+		add_filter( 'ctc_taxonomy_sermon_series_args', array( $this,'ctc_slugs' ), 10, 1);
 		//add_filter( 'ctc_post_type_event_args', array( 'ctc_slugs' ), 10, 1);
 		
 		// Hijack the topic taxonomy for other purposes
-		add_filter( 'ctc_taxonomy_sermon_topic_args', array( &$this,'ctc_slugs' ), 10, 1);
+		add_filter( 'ctc_taxonomy_sermon_topic_args', array( $this,'ctc_slugs' ), 10, 1);
 		
 	}
 
@@ -34,24 +34,24 @@ class CTCEX_CPTNames {
 			'CTC Extender', 
 			'manage_options', 
 			'ctc-extender',
-			array( &$this, 'options_page' ) );
+			array( $this, 'options_page' ) );
 	}
 
 	function settings_init() { 
 
-		register_setting( 'ctcexSettings', 'ctcex_settings', array( &$this, 'validate_settings' ) );
+		register_setting( 'ctcexSettings', 'ctcex_settings', array( $this, 'validate_settings' ) );
 
 		add_settings_section(
 			'ctcex_ctcexSettings_section', 
 			__( 'Your section description', 'ctcex' ), 
-			array( &$this, 'settings_section_callback' ), 
+			array( $this, 'settings_section_callback' ), 
 			'ctcexSettings'
 		);
 
 		add_settings_field( 
 			'ctc-sermons', 
 			__( 'Sermons', 'ctcex' ), 
-			array( &$this, 'textfield_render' ), 
+			array( $this, 'textfield_render' ), 
 			'ctcexSettings', 
 			'ctcex_ctcexSettings_section', 
 			array( 
@@ -63,7 +63,7 @@ class CTCEX_CPTNames {
 		add_settings_field( 
 			'ctc-sermon-series', 
 			__( 'Sermon Series', 'ctcex' ), 
-			array( &$this, 'textfield_render' ), 
+			array( $this, 'textfield_render' ), 
 			'ctcexSettings', 
 			'ctcex_ctcexSettings_section', 
 			array( 
@@ -75,7 +75,7 @@ class CTCEX_CPTNames {
 		add_settings_field( 
 			'ctc-sermon-topic', 
 			__( 'Sermon Topics', 'ctcex' ), 
-			array( &$this, 'textfield_render' ), 
+			array( $this, 'textfield_render' ), 
 			'ctcexSettings', 
 			'ctcex_ctcexSettings_section' ,
 			array( 
@@ -87,7 +87,7 @@ class CTCEX_CPTNames {
 		add_settings_field( 
 			'ctc-people', 
 			__( 'People', 'ctcex' ), 
-			array( &$this, 'textfield_render' ), 
+			array( $this, 'textfield_render' ), 
 			'ctcexSettings', 
 			'ctcex_ctcexSettings_section', 
 			array( 
@@ -99,7 +99,7 @@ class CTCEX_CPTNames {
 		add_settings_field( 
 			'ctc-locations', 
 			__( 'Locations', 'ctcex' ), 
-			array( &$this, 'textfield_render' ), 
+			array( $this, 'textfield_render' ), 
 			'ctcexSettings', 
 			'ctcex_ctcexSettings_section', 
 			array( 
@@ -111,7 +111,7 @@ class CTCEX_CPTNames {
 		add_settings_field( 
 			'ctc-events', 
 			__( 'Events', 'ctcex' ), 
-			array( &$this, 'textfield_render' ), 
+			array( $this, 'textfield_render' ), 
 			'ctcexSettings', 
 			'ctcex_ctcexSettings_section', 
 			array( 

@@ -10,29 +10,30 @@ class CTC_Extender {
 	
 	function __construct() {
 		// Version 
-		$this->version = '1.1';
+		$this->version = '1.2.5';
 		
 		// Church Theme Content is REQUIRED
 		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
 		
 		// Load plugin dependencies
-		add_action( 'plugins_loaded', array( &$this, 'load_deps'), 18 );
+		add_action( 'plugins_loaded', array( $this, 'load_deps'), 18 );
 		
 		// Add a few new metaboxes for events
-		add_filter( 'ctmb_meta_box-ctc_event_date', array( &$this,'metabox_filter_event_date' ) );
+		add_filter( 'ctmb_meta_box-ctc_event_date', array( $this, 'metabox_filter_event_date' ) );
+		add_filter( 'ctmb_meta_box-ctc_person_details', array( $this, 'metabox_filter_person_details' ) );
 
 		// Update the event columns recurrence note
-		add_filter( 'ctc_event_columns_recurrence_note', array( &$this, 'column_recurrence_note'), 10, 2 );
+		add_filter( 'ctc_event_columns_recurrence_note', array( $this, 'column_recurrence_note'), 10, 2 );
 
 		// Handle the event recurrence
 		remove_action( 'ctc_update_recurring_event_dates', 'ctc_update_recurring_event_dates' );
-		add_action( 'ctc_update_recurring_event_dates', array(&$this, 'update_recurring_event_dates' ) );
+		add_action( 'ctc_update_recurring_event_dates', array($this, 'update_recurring_event_dates' ) );
 		
 		// Add taxonomy images
-		add_action( 'save_post_ctc_sermon', array( &$this, 'save_sermon_image' ), 13);
-		add_action( 'save_post_ctc_event', array( &$this, 'save_event_image' ), 13);
-		add_action( 'save_post_ctc_location', array( &$this, 'save_location_image' ), 13);
-		add_action( 'save_post_ctc_person', array( &$this, 'save_person_image' ), 13);		
+		add_action( 'save_post_ctc_sermon', array( $this, 'save_sermon_image' ), 13);
+		add_action( 'save_post_ctc_event', array( $this, 'save_event_image' ), 13);
+		add_action( 'save_post_ctc_location', array( $this, 'save_location_image' ), 13);
+		add_action( 'save_post_ctc_person', array( $this, 'save_person_image' ), 13);		
 	}
 	
 	// Load plugin dependencies
@@ -217,12 +218,12 @@ class CTC_Extender {
 		
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
-		
 		// Person data
 		$position = get_post_meta( $post_id, '_ctc_person_position' , true ); 
 		$email = get_post_meta( $post_id, '_ctc_person_email' , true ); 
 		$phone = get_post_meta( $post_id, '_ctc_person_phone' , true ); 
 		$url = get_post_meta( $post_id, '_ctc_person_urls' , true ); 
+		$gender = get_post_meta( $post_id, '_ctc_person_gender' , true ); 
 		
 		$data = array(
 			'name'      => get_the_title( $post_id ),
@@ -231,6 +232,7 @@ class CTC_Extender {
 			'position'  => $position,
 			'email'     => $email,
 			'url'       => $url,
+			'gender'    => $gender,
 		);
 		
 		return $data;
@@ -303,13 +305,44 @@ class CTC_Extender {
 	// an image attached to the person post
 	function save_person_image( $post_id ){
 		$img = plugin_dir_url( __FILE__ ) . 'user.png';
-		$img = apply_filters( 'ctc_person_image', $img );
+		$gender = null;
+		if( isset( $_REQUEST['_ctc_person_gender'] ) ) 
+			$gender = $_REQUEST['_ctc_person_gender'];
+			
+		$img = apply_filters( 'ctc_person_image', $img, $gender );
 		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-tall' ); 
 		if( $thumbnail ) $img = $thumbnail[0];
 		
 		update_post_meta( $post_id, '_ctc_image', $img );
 	}
 	
+
+	
+/********************************************		
+	CTC new person feature
+*********************************************/		
+	function metabox_filter_person_details( $meta_box ){
+		// Add gender field
+		$gender = array(
+			'name'	=> __( 'Gender', 'ctcex' ),
+			'after_name'	=> '',
+			'after_input'	=> '',
+			'desc'	=> _x( 'Can be used by theme for default person image', 'person meta box', 'ctcex' ),
+			'type'	=> 'select', 
+			'options'	=> array( 'male'=>'Male', 'female'=>'Female' ) ,
+			'default'	=> 'male', 
+			'no_empty'	=> true, 
+			'allow_html'	=> false, 
+			'visibility' 		=> array()
+		);
+		$meta_box['fields'] = ctc_array_merge_after_key(
+			$meta_box['fields'], 
+			array( '_ctc_person_gender' => $gender ),
+			'_ctc_person_email'	
+		);
+		
+		return $meta_box;
+	}
 	
 /********************************************		
 	CTC new Event features

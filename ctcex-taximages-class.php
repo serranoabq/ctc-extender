@@ -12,10 +12,10 @@ if ( ! class_exists( 'CTCEX_TaxImages' ) ) {
 			// Church Theme Content is REQUIRED
 			if ( ! class_exists( 'Church_Theme_Content' ) ) return;
 
-			add_action('admin_head', array( &$this, 'admin_head' ) ) ;
-			add_action('edit_term', array( &$this, 'save_tax_img' ) );
-			add_action('create_term', array( &$this, 'save_tax_img' ) );
-			add_action('delete_term', array( &$this, 'delete_tax_img' ) );
+			add_action('admin_head', array( $this, 'admin_head' ) ) ;
+			add_action('edit_term', array( $this, 'save_tax_img' ) );
+			add_action('create_term', array( $this, 'save_tax_img' ) );
+			add_action('delete_term', array( $this, 'delete_tax_img' ) );
 		}
 
 		/**
@@ -31,10 +31,10 @@ if ( ! class_exists( 'CTCEX_TaxImages' ) ) {
 			$taxonomies = apply_filters( 'ctc_tax_img_taxonomies', $taxonomies ); // allow filtering
 
 			foreach( $taxonomies as $tax ) {
-				add_action( $tax . '_add_form_fields', array( &$this, 'img_tax_field' ) );
-				add_action( $tax . '_edit_form_fields', array( &$this, 'img_tax_field' ) );
-				add_filter( "manage_edit-{$tax}_columns", array( &$this, 'img_tax_column' ) );
-				add_filter( "manage_{$tax}_custom_column", array( &$this, 'edit_tax_img_column' ), 10 , 3 );
+				add_action( $tax . '_add_form_fields', array( $this, 'img_tax_field' ) );
+				add_action( $tax . '_edit_form_fields', array( $this, 'img_tax_field' ) );
+				add_filter( "manage_edit-{$tax}_columns", array( $this, 'img_tax_column' ) );
+				add_filter( "manage_{$tax}_custom_column", array( $this, 'edit_tax_img_column' ), 10 , 3 );
 			}
 		}
 
