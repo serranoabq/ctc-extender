@@ -2,18 +2,20 @@
 /*
     Plugin Name: CTC Extender
     Description: Plugin to supplement the Church Theme Content plugin by adding additional features. Requires <strong>Church Theme Content</strong> plugin.
-    Version: 1.2
+    Version: 1.2.7
     Author: Justin R. Serrano
 */
 
 // No direct access
 if ( !defined( 'ABSPATH' ) ) exit;
 
+
 global $CTCEX;
 if( ! class_exists( 'CTC_Extender' ) ) {
 	require_once( sprintf( "%s/ctc-extender-class.php", dirname(__FILE__) ) );
 	$CTCEX = new CTC_Extender();
 }
+
 
 // public shortcuts to some class features 
 
@@ -69,9 +71,14 @@ function ctcex_update_recurring_events(){
 function ctcex_get_option( $option, $default = '' ){
 	$options = get_option( 'ctcex_settings' );
 	if( $options[ $option ] )
-		return $options[ $option ];
+		return apply_filters( 'ctcex_translate', $option, $options[ $option ] );
 	else
 		return $default;
+}
+
+function ctcex_has_option( $option ) {
+	$options = get_option( 'ctcex_settings' );
+	return array_key_exists( $option, $options );
 }
 
 function ctcex_tax_img_url( $term_id = NULL ) {
@@ -88,4 +95,38 @@ function ctcex_tax_img_url( $term_id = NULL ) {
 	// taxonomy image plugin to be used with CTC-related functions
 	$imgsrc = apply_filters( 'ctcex_tax_img_url_filter', $imgsrc, $term_id );
 	return $imgsrc;
+}
+
+add_filter( 'ctcex_translate', 'ctcex_customTranslate', 10, 2 );
+function ctcex_customTranslate( $option, $default ) {
+	// This is meant to be used with a plugin like Loco Translate that allows you to change
+	// theme/plugin translations after the fact
+	// After installing plugin, use Loco Translate to create translations for the 
+	// new names given in the main interface. 
+	
+	// INPUT: $option - the 'filtered value', but it's really the option name
+	//        $default - default value in case it's not one of the specific names
+	$out = $default; 
+	switch ( $option ) {
+		case 'ctc-sermons':
+			$out = _x( 'ctc-sermons', 'Custom translation for CPT name. Use Plural/Singular format', 'ctcex' );
+			break;
+		case 'ctc-sermon-series':
+			$out = _x( 'ctc-sermon-series', 'Custom translation for CPT name. Use Plural/Singular format', 'ctcex' );
+			break;
+		case 'ctc-sermon-topic':
+			$out = _x( 'ctc-sermon-topic', 'Custom translation for CPT name. Use Plural/Singular format', 'ctcex' );
+			break;
+		case 'ctc-locations':
+			$out = _x( 'ctc-locations', 'Custom translation for CPT name. Use Plural/Singular format', 'ctcex' );
+			break;
+		case 'ctc-events':
+			$out = _x( 'ctc-events', 'Custom translation for CPT name. Use Plural/Singular format', 'ctcex' );
+			break;
+		case 'ctc-people':
+			$out = _x( 'ctc-people', 'Custom translation for CPT name. Use Plural/Singular format', 'ctcex' );
+			break;
+	}
+	if ( $out == $option ) $out = $default;
+	return $out;
 }

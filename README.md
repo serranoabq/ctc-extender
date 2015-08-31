@@ -24,3 +24,4 @@ Changelog
 * 1.1   - Bug fixes with recurrence
 * 1.2   - Add category option to full calendar
 * 1.2.5 - Add gender field to ctc_person. Bug fixes.
+* 1.2.7 - Minor fixes. Improved? i18n

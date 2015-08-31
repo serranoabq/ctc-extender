@@ -1,0 +1,249 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CTC Extender\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: Fri Aug 28 2015 13:23:38 GMT-0600 (Mountain Daylight "
+"Time)\n"
+"PO-Revision-Date: Mon Aug 31 2015 14:12:02 GMT-0600 (Mountain Daylight Time)\n"
+"Last-Translator: Harvest Fellowship <serranoabq+harvest@gmail.com>\n"
+"Language-Team: \n"
+"Language: Spanish (Spain)\n"
+"Plural-Forms: nplurals=2; plural=n != 1\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
+"__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
+"_x:1,2c;_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;"
+"esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
+"esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
+"X-Loco-Target-Locale: es_ES\n"
+"X-Generator: Loco - https://localise.biz/"
+
+#: ../ctc-extender-class.php:332
+msgid "Gender"
+msgstr "Género"
+
+#: ../ctc-extender-class.php:335
+msgctxt "person meta box"
+msgid "Can be used by theme for default person image"
+msgstr "Puede ser usado por el tema para la imagen por defecto para una persona"
+
+#: ../ctc-extender-class.php:364
+msgctxt "event meta box"
+msgid "Daily"
+msgstr "A diario"
+
+#: ../ctc-extender-class.php:370
+msgid "Recurrence Period"
+msgstr "Periodo de Recurrencia"
+
+#: ../ctc-extender-class.php:373
+msgctxt "event meta box"
+msgid "Recur every N days/weeks/months/years"
+msgstr "Repetir cada N días/semanas/meses/años"
+
+#: ../ctc-extender-class.php:391
+msgid "Monthly Recurrence Type"
+msgstr "Tipo de recurrencia mensual"
+
+#: ../ctc-extender-class.php:395
+msgctxt "monthly recurrence type"
+msgid "On the same day of the month"
+msgstr "El mismo día del mes"
+
+#: ../ctc-extender-class.php:396
+msgctxt "monthly recurrence type"
+msgid "On a specific week of the month"
+msgstr "En una semana específica del mes"
+
+#: ../ctc-extender-class.php:413
+msgid "Monthly Recurrence Week"
+msgstr "Semana de recurrencia mensual"
+
+#: ../ctc-extender-class.php:414
+msgctxt "event meta box"
+msgid "Day of the week is the same as Start Date"
+msgstr "Día de la semana es el mismo día de la Fecha de Comienzo"
+
+#: ../ctc-extender-class.php:467
+#, php-format
+msgid "Every day"
+msgid_plural "Every %d days"
+msgstr[0] "Diariamente"
+msgstr[1] "Cada %d días"
+
+#: ../ctc-extender-class.php:474
+#, php-format
+msgid "Every %s"
+msgid_plural "%ss every %d weeks"
+msgstr[0] "Todos los %s"
+msgstr[1] "%s cada %d semanas"
+
+#: ../ctc-extender-class.php:481
+#, php-format
+msgid "Every month"
+msgid_plural "Every %d months"
+msgstr[0] "Mensualmente"
+msgstr[1] "Cada %d meses"
+
+#: ../ctc-extender-class.php:488
+#, php-format
+msgid "Every year"
+msgid_plural "Every %d years"
+msgstr[0] "Anualmente"
+msgstr[1] "Cada %d años"
+
+#: ../ctc-extender-class.php:497
+#, php-format
+msgctxt ""
+"Date expression. As in \" on the 1st/2nd...31st of the month\". Note the space "
+"before."
+msgid " on the %s"
+msgstr " el %s"
+
+#: ../ctc-extender-class.php:500
+msgctxt "As in \"1st Sun/Mon... of the month\""
+msgid "1st"
+msgstr "1er"
+
+#: ../ctc-extender-class.php:501
+msgctxt "As in \"2nd Sun/Mon... of the month\""
+msgid "2nd"
+msgstr "2do"
+
+#: ../ctc-extender-class.php:502
+msgctxt "As in \"3rd Sun/Mon... of the month\""
+msgid "3rd"
+msgstr "3er"
+
+#: ../ctc-extender-class.php:503
+msgctxt "As in \"4th Sun/Mon... of the month\""
+msgid "4th"
+msgstr "4to"
+
+#: ../ctc-extender-class.php:508
+msgctxt "As in \"last Sun/Mon... of the month\""
+msgid "last"
+msgstr "último"
+
+#: ../ctc-extender-class.php:510
+#, php-format
+msgctxt ""
+"Date expression. As in \" on the 1st/2nd... Sun/Mon...\". Note the space "
+"before."
+msgid " on the %s %s"
+msgstr " el %s %s"
+
+#: ../ctc-extender.php:112
+msgctxt "Custom translation for CPT name. Use Plural/Singular format"
+msgid "ctc-sermons"
+msgstr ""
+
+#: ../ctc-extender.php:115
+msgctxt "Custom translation for CPT name. Use Plural/Singular format"
+msgid "ctc-sermon-series"
+msgstr ""
+
+#: ../ctc-extender.php:118
+msgctxt "Custom translation for CPT name. Use Plural/Singular format"
+msgid "ctc-sermon-topic"
+msgstr ""
+
+#: ../ctc-extender.php:121
+msgctxt "Custom translation for CPT name. Use Plural/Singular format"
+msgid "ctc-locations"
+msgstr ""
+
+#: ../ctc-extender.php:124
+msgctxt "Custom translation for CPT name. Use Plural/Singular format"
+msgid "ctc-events"
+msgstr ""
+
+#: ../ctc-extender.php:127
+msgctxt "Custom translation for CPT name. Use Plural/Singular format"
+msgid "ctc-people"
+msgstr ""
+
+#: ../ctcex-cptnames-class.php:46
+msgid "Your section description"
+msgstr "Descripción de sección"
+
+#: ../ctcex-cptnames-class.php:53 ../ctcex-cptnames-class.php:58
+msgid "Sermons"
+msgstr "Sermones"
+
+#: ../ctcex-cptnames-class.php:65 ../ctcex-cptnames-class.php:70
+msgid "Sermon Series"
+msgstr "Series de Sermones"
+
+#: ../ctcex-cptnames-class.php:77 ../ctcex-cptnames-class.php:82
+msgid "Sermon Topics"
+msgstr "Tópicos de Sermón"
+
+#: ../ctcex-cptnames-class.php:89 ../ctcex-cptnames-class.php:94
+msgid "People"
+msgstr "Personas"
+
+#: ../ctcex-cptnames-class.php:101 ../ctcex-cptnames-class.php:106
+msgid "Locations"
+msgstr "Ubicaciones"
+
+#: ../ctcex-cptnames-class.php:113 ../ctcex-cptnames-class.php:118
+msgid "Events"
+msgstr "Eventos"
+
+#: ../ctcex-cptnames-class.php:140
+msgid ""
+"Enter the display names to use for the different church theme content types. "
+"For instance <code>People</code> could be <code>Staff</code>, "
+"<code>Sermons</code> could be <code>Messages</code> or "
+"<code>Locations</code> could be <code>Places</code>. Make sure to resave the "
+"Permalinks to update the permalinks. If separate singular and plural names "
+"are desired, write them as <code>Plural/Singluar</code> (i.e., "
+"<code>Campuses/Campus</code>)."
+msgstr ""
+"Entre el nombre a usar con cada tipo de contenido de Church Theme Content. "
+"Por ejemplo, \n"
+"<code>People</code> podría ser <code>Equipo</code>, <code>Sermons</code> "
+"podría ser <code>Mensajes</code> o <code>Locations</code> podría ser "
+"<code>Lugares</code>. Asegúrese de salvar los Permalinks para actualizar los "
+"permalinks. Si desea distinto nombres para plural y singular, escríbalo como "
+"<code>Plural/Singular</code> (por ejemplo, <code>Campuses/Campus</code>)."
+
+#: ../ctcex-cptnames-class.php:156
+msgid "Restore Defaults"
+msgstr "Restaurar Valores"
+
+#: ../ctcex-cptnames-class.php:157
+msgid "Save Changes"
+msgstr "Salvar Cambios"
+
+#: ../ctcex-taximages-class.php:68
+msgid "Featured Image"
+msgstr "Imágen Principal"
+
+#: ../ctcex-taximages-class.php:72
+msgid "Add Image"
+msgstr "Añadir Imágnen"
+
+#: ../ctcex-taximages-class.php:73
+msgid "Remove Image"
+msgstr "Remover Imágen"
+
+#: ../ctcex-taximages-class.php:74
+#, php-format
+msgid ""
+"Choose an image to associate with this %s. To replace an image, first "
+"<strong>Remove</strong> it and then <strong>Add</strong> another one."
+msgstr ""
+"Elija una imágen para associar con este %s. Para reemplazar una imágen, "
+"primero presione \n"
+"<strong>Remover</strong> y luego <strong>Añadir</strong> otra."
+
+#: ../ctcex-taximages-class.php:156
+msgid "Taxonomy Image"
+msgstr "Imágen de Taxonomía"
