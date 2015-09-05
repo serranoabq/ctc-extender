@@ -161,7 +161,6 @@ if( class_exists( 'CT_Recurrence' ) ) {
 					$next_args = $args;
 					$next_args['start_date'] = $date;
 					$date = $this->calc_next_date( $next_args );
-var_dump( $date );
 					// If for some reason no next date can be calculated, stop
 					// This is a safeguard to prevent an infinite loop
 					if ( empty( $date ) ) {

@@ -535,10 +535,10 @@ class CTC_Extender {
 			'meta_query' => array(
 				'relation' => 'AND',
 				array(
-					'key' => '_ctc_event_end_date',
-					'type' => 'DATE',
+					'key' => '_ctc_event_end_date_end_time',
+					'type' => 'DATETIME',
 					'compare' => '<', // earlier than 
-					'value' => date_i18n( 'Y-m-d' ), // today localized
+					'value' => date_i18n( 'Y-m-d H:i:s' ), // today localized
 				 ),
 				/*array(
 					'key' => '_ctc_event_recurrence',
