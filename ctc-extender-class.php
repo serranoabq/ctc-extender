@@ -358,18 +358,33 @@ class CTC_Extender {
 *********************************************/		
 	function metabox_filter_location_details( $meta_box ){
 		// Add location pastor field
-		// TODO: make it a drop down with available CTC Persons
+		$people = get_posts( array(
+			'post_type' => 'ctc_person',
+			'posts_per_page' => -1,
+			'order' => 'ASC',
+			'orderby' => 'menu_order',
+		) );
+		
+		$team[] = '';
+		foreach ($people as $person){
+				$team[ json_encode( $person->post_title ) ] = $person->post_title; 
+		}
+		
 		$pastor = array(
 			'name'	=> __( 'Pastor', 'ctcex' ),
 			'after_name'	=> '',
 			'after_input'	=> '',
-			'desc'	=> _x( 'Location pastor', 'location  meta box', 'ctcex' ),
+			'desc'	=> '',
 			'type'	=> 'text', 
 			'default'	=> '', 
 			'no_empty'	=> false, 
 			'allow_html'	=> false, 
 			'visibility' 		=> array()
 		);
+		if( count( $team ) > 1 ) {
+			$pastor[ 'type' ] = 'select';
+			$pastor[ 'options' ] = $team;
+		}
 		$meta_box['fields'] = ctc_array_merge_after_key(
 			$meta_box['fields'], 
 			array( '_ctc_location_pastor' => $pastor ),
