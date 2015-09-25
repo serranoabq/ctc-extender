@@ -22,6 +22,8 @@ class CTC_Extender {
 		add_filter( 'ctmb_meta_box-ctc_event_date', array( $this, 'metabox_filter_event_date' ) );
 		add_filter( 'ctmb_meta_box-ctc_person_details', array( $this, 'metabox_filter_person_details' ) );
 
+		add_filter( 'ctmb_meta_box-ctc_location' , array( $this, 'metabox_filter_location_details' ) );
+		
 		// Update the event columns recurrence note
 		add_filter( 'ctc_event_columns_recurrence_note', array( $this, 'column_recurrence_note'), 10, 2 );
 
@@ -173,7 +175,7 @@ class CTC_Extender {
 			'start'            => $start,
 			'end'              => $end,
 			'time'             => $time,
-			'endtime'             => $endtime,
+			'endtime'          => $endtime,
 			'recurrence'       => $recurrence,
 			'recurrence_note'  => $recurrence_note,
 			'map_url'		       => $map_url,
@@ -194,6 +196,7 @@ class CTC_Extender {
 		$phone = get_post_meta( $post_id, '_ctc_location_phone' , true ); 
 		$times = get_post_meta( $post_id, '_ctc_location_times' , true ); 
 		$slider = get_post_meta( $post_id, '_ctc_location_slider' , true ); 
+		$pastor = get_post_meta( $post_id, '_ctc_location_pastor' , true );  
 		
 		$address_url = urlencode( 'Albuquerque' );
 		if( $address )  $address_url = urlencode( $address ); 
@@ -209,6 +212,7 @@ class CTC_Extender {
 			'address'     => $address,
 			'phone'       => $phone,
 			'times'       => $times,
+			'pastor'      => $pastor,
 			'map_url'		  => $map_url,
 			'map_img_url'	=> $map_img_url,
 			'map_used'    => $map_used,
@@ -344,6 +348,32 @@ class CTC_Extender {
 			$meta_box['fields'], 
 			array( '_ctc_person_gender' => $gender ),
 			'_ctc_person_email'	
+		);
+		
+		return $meta_box;
+	}
+	
+/********************************************		
+	CTC new location feature
+*********************************************/		
+	function metabox_filter_location_details( $meta_box ){
+		// Add location pastor field
+		// TODO: make it a drop down with available CTC Persons
+		$pastor = array(
+			'name'	=> __( 'Pastor', 'ctcex' ),
+			'after_name'	=> '',
+			'after_input'	=> '',
+			'desc'	=> _x( 'Location pastor', 'location  meta box', 'ctcex' ),
+			'type'	=> 'text', 
+			'default'	=> '', 
+			'no_empty'	=> false, 
+			'allow_html'	=> false, 
+			'visibility' 		=> array()
+		);
+		$meta_box['fields'] = ctc_array_merge_after_key(
+			$meta_box['fields'], 
+			array( '_ctc_location_pastor' => $pastor ),
+			'_ctc_location_times'	
 		);
 		
 		return $meta_box;
