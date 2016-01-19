@@ -13,254 +13,167 @@ class CTCEX_Sermon {
 		// Church Theme Content is REQUIRED
 		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
 		
-		add_shortcode( 'ctc_sermon', array( &$this, 'shortcode' ) );
+		add_shortcode( 'ctcex_sermon', array( $this, 'shortcode' ) );
 	}
+	
 	/*
 	 * Usage: [ctc_sermon] 
 	 *   Optional parameters:
-	 *     category = (string)
-	 *       Category slug to show
+	 *     topic = (string)
+	 *       Slug of sermon topic to show
 	 * @since 1.0
 	 * Parse shortcode and insert calendar
 	 * @param string $attr Shortcode options
-	 * @return string Full sermon displays
+	 * @return string Full sermon display
 	 */
 	function shortcode( $attr ) {
-		$output = apply_filters( array( &$this, 'shortcode' ), '', $attr );
+		// Filter to bypass this shortcode with a theme-designed shortcode handler
+		// Use: add_filter( 'ctcex_sermon', '<<<callback>>>', 10, 2 ); 
+		$output = apply_filters( 'ctcex_sermon', '', $attr );
 	
 		if ( $output != '' ) return $output;
 		
-		$this->scripts_styles();
-		
 		extract( shortcode_atts( array(
-			'category' 	=>  '',  
+			'topic' 	=>  '',  
 			), $attr ) );
-		
-		// Allow hooking into the container class; themes can hook here to apply a separate class 
-		// to the container or simply provide styles for the
-		$class = apply_filters( 'ctc_sermon_class', '' );
-		
-		
-		// Container div
-		$result = '<div id="ctcex-sermon-container ' . $class . '"></div>';
 		
 		// do query 
 		$query = array(
-			'post_type' => 'ctc_sermon', 
-			'order' => 'ASC',
-			'orderby' => 'meta_value',
-			'meta_key' => '_ctc_event_start_date_start_time',
-			'meta_type' => 'DATETIME',
-			'posts_per_page' => $max_events, 
-			'meta_query'     => array(
-				array(
-					'key'     => '_ctc_event_end_date',
-					'value'   => date_i18n( 'Y-m-d' ), // today localized
-					'compare' => '>=', // later than today
-					'type'    => 'DATE',
-				),
-			), 
-		) ; 
+			'post_type' 				=> 'ctc_sermon', 
+			'order' 						=> 'DESC',
+			'orderby' 					=> 'date',
+			'posts_per_page'		=> 1,
+		); 
 		
 		if( !empty( $category ) )  {
 			$query[ 'tax_query' ] = array( 
 				array(
-					'taxonomy'  => 'ctc_event_category',
+					'taxonomy'  => 'ctc_sermon_topic',
 					'field'     => 'slug',
-					'terms'     => $category,
+					'terms'     => $topic,
 				),
 			);
 		}
 		
-		$posts = new WP_Query();
-		$posts -> query($query); 
+		$posts = new WP_Query( $query );
 		
-		if ($posts->have_posts()){
-			$events = array();
-			while ($posts->have_posts()) :
+		if( $posts->have_posts() ){
+			while ( $posts->have_posts() ) :
 				$posts		-> the_post();
 				$post_id 	= get_the_ID();
 				$title 		= get_the_title() ;
 				$url 			= get_permalink();
+				$data = ctcex_get_sermon_data( $post_id );
 				
-				// Event data
-				$start_date = get_post_meta( $post_id, '_ctc_event_start_date' , true ); 
-				$end_date   = get_post_meta( $post_id, '_ctc_event_end_date' , true ); 
-				$start_time = get_post_meta( $post_id, '_ctc_event_start_time' , true );
-				$end_time   = get_post_meta( $post_id, '_ctc_event_end_time' , true );
-				$start_date_start_time = str_replace( ' ', 'T', ctc_convert_to_datetime( $start_date, $start_time ) ); 
-				$end_date_end_time = str_replace( ' ', 'T', ctc_convert_to_datetime( $end_date, $end_time ) ); 
-				
-				$allday = empty( $start_time ); // safest assumption
-
-				$eventlen = strtotime($end_date) - strtotime($start_date);
-				
-				// append to event array	
-				$events[] = array(
-					'id'        => $post_id,
-					'title'     => $title,
-					'htmlTitle' => $title,
-					'allDay'    => $allday,
-					'start'     => $start_date_start_time,
-					'end' 	    => $end_date_end_time,
-					'url'       => $url
+				// classes
+				$classes = array(
+					'container'  => 'ctcex-sermon-container',
+					'media'      => 'ctcex-sermon-media',
+					'details'    => 'ctcex-sermon-details',
+					'date'       => 'ctcex-sermon-date',
+					'speaker'    => 'ctcex-sermon-speaker',
+					'series'     => 'ctcex-sermon-series',
+					'topic'      => 'ctcex-sermon-topic',
+					'audio-link' => 'ctcex-sermon-audio-link',
+					'audio'      => 'ctcex-sermon-audio',
+					'video'      => 'ctcex-sermon-video',
+					'img'        => 'ctcex-sermon-img'
 				);
 				
-				// Pertinent recurrence information
-				$recurrence = get_post_meta( $post_id, '_ctc_event_recurrence' , true ); 
+				// Filter the classes only instead of the whole shortcode
+				// Use: add_filter( 'ctcex_sermon_classes', '<<<callback>>>' ); 
+				$classes = apply_filters( 'ctcex_sermon_classes', $classes );
 				
-				// These are not default in CTC, but are included in the Harvest theme
-				$recurrence_period = get_post_meta( $post_id, '_ctc_event_recurrence_period' , true );
-				$recurrence_monthly_type = get_post_meta( $post_id, '_ctc_event_recurrence_monthly_type' , true );
-				$recurrence_monthly_week = get_post_meta( $post_id, '_ctc_event_recurrence_monthly_week' , true );
-				$recurrence_end 	= get_post_meta( $post_id, '_ctc_event_recurrence_end_date', true );
+				// Get date
+				$date_src = sprintf( '<div class="%s"><b>%s:</b> %s</div>', $classes[ 'date' ], __( 'Date', 'ctcex' ), get_the_date() );
 				
-				// Display recurrences
-				if( 'none' != $recurrence ) {
-					$n = $recurrence_period != '' ? (int) $recurrence_period : 1;
-					list( $start_date_y, $start_date_m, $start_date_d ) = explode( '-', $start_date );
-					for( $i=1 ; $i <= $max_recur ; $i++ ) {
-						list( $y, $m, $d ) = explode( '-', $start_date );
-						
-						switch( $recurrence ) {
-							// NOTE: Daily is not an option in the CTC plugin 
-							case 'daily':
-								$DateTime = new DateTime( $start_date );
-								$DateTime->modify( '+' . $i * $n . ' days' );
-								list( $y, $m, $d ) = explode( '-', $DateTime->format( 'Y-m-d' ) );
-								break;
-								
-							case 'weekly':
-								// same day of the week (eg, Sun-Sat)
-								$DateTime = new DateTime( $start_date );
-								$DateTime->modify( '+' . $i * $n . ' weeks' );
-								list( $y, $m, $d ) = explode( '-', $DateTime->format( 'Y-m-d' ) );
-								break;
-								
-							case 'monthly':
-								$DateTime = new DateTime( $start_date );
-								$DateTime->modify( '+' . $i * $n . ' months' );
-								list( $y, $m, $d ) = explode( '-', $DateTime->format( 'Y-m-d' ) );
-								
-								// On a specific week of month's day
-								// 1st - 4th or Last day of week in the month
-								if ( 'week' == $recurrence_monthly_type && ! empty( $recurrence_monthly_week ) ) {
-									// What is start_date's day of the week
-									// 0 - 6 represents Sunday through Saturday
-									$start_date_day_of_week = date( 'w', strtotime( $start_date ) );
+				// Get speaker
+				$speaker_src = $data[ 'speakers' ] ? sprintf( '<div class="%s"><b>%s:</b> %s</div>', $classes[ 'speaker' ], __( 'Speaker', 'ctcex' ), $data[ 'speakers' ] ) : '';
+				
+				// Get series
+				$series_src = $data[ 'series' ] ?	sprintf( '<div class="%s"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'series' ],  __( 'Series', 'ctcex' ), $data[ 'series_link' ], $data[ 'series' ] ) : '';
+				
+				// Get topics
+				// Topic name
+				$topic_name = explode( '/', ctcex_get_option( 'ctc-sermon-topic' , __( 'Topic', 'ctcex') ) );
+				$topic_name = ucfirst( array_pop(  $topic_name ) );
+				$topic_src = $data[ 'topic' ] ? sprintf( '<div class="%"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'topic' ], $topic_name, $data[ 'topic_link' ], $data[ 'topic' ] ) : '';
 
-									// Loop the days of this month
-									$week_of_month = 1;
-									$times_day_of_week_found = 0;
-									$days_in_month = date( 't', mktime( 0, 0, 0, $m, 1, $y ) );
-
-									for ( $i = 1; $i <= $days_in_month; $i++ ) {
-
-										// Get this day's day of week (0 - 6)
-										$day_of_week = date( 'w', mktime( 0, 0, 0, $m, $i, $y ) );
-
-										// This day's day of week matches start date's day of week
-										if ( $day_of_week == $start_date_day_of_week ) {
-											$last_day_of_week_found = $i;
-											$times_day_of_week_found++;
-
-											// Is this the 1st - 4th day of week we're looking for?
-											if ( $recurrence_monthly_week == $times_day_of_week_found ) {
-												$d = $i;
-												break;
-											}
-										}
-									}
-
-									// Are we looking for 'last' day of week in a month?
-									if ( 'last' == $recurrence_monthly_week && ! empty( $last_day_of_week_found ) ) {
-										$d = $last_day_of_week_found;
-									}
-								} else {
-									if ( $d < $start_date_d ) {
-										// Move back to last day of last month
-										$m--;
-										if ( 0 == $m ) {
-											$m = 12;
-											$y--;
-										}
-										// Get days in the prior month
-										$d = date( 't', mktime( 0, 0, 0, $m, $d, $y) );
-									}
-								}
-
-								break;
-								
-							case 'yearly':
-								$DateTime = new DateTime( $start_date );
-								$DateTime->modify( '+' . $i * $n . ' years' );
-								list( $y, $m, $d ) = explode( '-', $DateTime->format( 'Y-m-d' ) );
-								if ( $d < $start_date_d ) {
-									// Move back to last day of last month
-									$m--;
-									if ( 0 == $m ) {
-										$m = 12;
-										$y--;
-									}
-
-									// Get days in the prior month
-									$d = date( 't', mktime( 0, 0, 0, $m, $d, $y) );
-								}
-								break;
-								
-						} // switch
-						
-						// make the new date
-						$new_start_date = date( 'Y-m-d', mktime( 0, 0, 0, $m, $d, $y ) );
-						$new_end_date = date( 'Y-m-d', strtotime( $new_start_date ) + $eventlen );
-						
-						// stop if new date is past the recurrence end date
-						if( strtotime( $new_start_date ) > strtotime( $recurrence_end ) ) break;
-						
-						$new_start_date_start_time = str_replace( ' ', 'T', ctc_convert_to_datetime( $new_start_date, $start_time ) );
-						$new_end_date_end_time = str_replace( ' ', 'T', ctc_convert_to_datetime( $new_end_date, $end_time ) );
-													
-						// append to event array
-						$events[] = array(
-							'id' 		    => $post_id,
-							'title'     => $title,
-							'htmlTitle' => $title,
-							'allDay'    => $allday,
-							'start'     => $new_start_date_start_time,
-							'end' 	    => $new_end_date_end_time,
-							'url'       => $url
-						);
-					}
-				}
+				// Get audio link
+				$audio_link_src = $data[ 'audio' ] ? sprintf( '<div class="%s"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'audio-link' ], __( 'Audio', 'ctcex' ), $data[ 'audio' ], __( 'Download audio', 'ctcex' ) ) : '';
+				
+				// Get audio display
+				$audio_src = $data[ 'audio' ] ? sprintf( '<div class="%s">%s</div>', $classes[ 'audio' ], wp_audio_shortcode( array( 'src' => $data[ 'audio' ] ) ) ) : '';
+				
+				// Get video display
+				$video_iframe_class = strripos( $data[ 'video' ], 'iframe' ) ? 'iframe-container' : '';
+				$video_src = $data[ 'video' ] ? sprintf( '<div class="%s %s">%s</div>', $classes[ 'video' ], $video_iframe_class, $video_iframe_class ? $data[ 'video' ] : wp_video_shortcode( array( 'src' => $data[ 'video' ] ) ) ) : '';
+		
+				// Use the image as a placeholder for the video
+				$img_overlay_class = $data[ 'video' ] && $data[ 'img' ] ? 'ctcex-overlay' : '';
+				$img_overlay_js = $img_overlay_class ? sprintf(
+					'<script>
+						jQuery(document).ready( function($) {
+							//$( ".%s" ).css( "position", "relative" );
+							$( ".ctcex-overlay" ).css( "cursor", "pointer" );
+							var vid_src = \'%s\';
+							vid_src = vid_src.replace( "autoPlay=false", "autoPlay=true" );
+							$( ".ctcex-overlay" ).click( function(){
+								$( this ).hide();
+								$( ".ctcex-overlay" ).fadeOut( 400, function() {
+									$( this ).replaceWith( vid_src );
+								});
+							} );
+						})
+					</script>', 
+					$classes[ 'media' ],
+					$video_src ) : '' ;
+					
+				// Get image
+				$img_src = $data[ 'img' ] ? sprintf( '%s<img class="%s %s" src="%s" alt="%s"/>', $img_overlay_js, $classes[ 'img' ], $img_overlay_class, $data[ 'img' ], get_the_title() ) : '';
+				$video_src = $img_overlay_class ? $img_src : $video_src;
+				
+				$img_video_output = $video_src ? $video_src : $img_src . $audio_src;
+				
+				// Prepare output
+				$output = sprintf(
+					'<div class="%s">
+						<div class="%s">%s</div>
+						<div class="%s">
+							<h3><a href="%s">%s</a></h3>
+							%s
+							%s
+							%s
+							%s
+							%s
+						</div>
+					', 
+					$classes[ 'container' ],
+					$classes[ 'media' ],
+					$img_video_output,
+					$classes[ 'details' ],
+					$url,
+					$title,
+					$date_src,
+					$speaker_src,
+					$series_src,
+					$topic_src,
+					$audio_link_src
+				);
+				
+				// Filter the output only instead of the whole shortcode
+				// Use: add_filter( 'ctcex_sermon_output', '<<<callback>>>', 10, 3 ); 
+				//  Args: output is the output to filter
+				//        topic is the topic passed on to the shortcode
+				//        data is the sermon data
+				$output = apply_filters( 'ctcex_sermon_output', $output, $topic, $data );
+				
 			endwhile; 
 		}
 		wp_reset_query();
-		
-		// The event data is loded as a json object 
-		$before .= '<script>';
-		$before .= 'var events = '. json_encode($events) .';';
-		$before .= 'var fixedView = '. json_encode($view) . ';';
-		$before .= 'var breaks = '. json_encode($breaks) . ';';
-		$before .= '</script>';
-		
-		return $before . $result . $after;
+		echo $output;
 	}
 
-	/**
-	 * Register scripts and styles
-	 *
-	 * @since 1.0
-	 */
-	function scripts_styles(){
-			
-		wp_enqueue_script( 'ctc-sermon-script', 
-			plugins_url( 'ctc-sermon.js' , __FILE__ ) ) );
-		
-		// Themes can dequeue this style and add their own
-		wp_enqueue_style( 'ctc-sermon-style', 
-				plugins_url( 'ctc-sermon.css' , __FILE__ ) );
-	}
-	
 }
 
 
