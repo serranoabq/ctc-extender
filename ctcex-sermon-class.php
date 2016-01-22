@@ -22,7 +22,7 @@ class CTCEX_Sermon {
 	 *     topic = (string)
 	 *       Slug of sermon topic to show
 	 * @since 1.0
-	 * Parse shortcode and insert calendar
+	 * Parse shortcode and insert recent sermon
 	 * @param string $attr Shortcode options
 	 * @return string Full sermon display
 	 */
@@ -45,7 +45,7 @@ class CTCEX_Sermon {
 			'posts_per_page'		=> 1,
 		); 
 		
-		if( !empty( $category ) )  {
+		if( !empty( $topic ) )  {
 			$query[ 'tax_query' ] = array( 
 				array(
 					'taxonomy'  => 'ctc_sermon_topic',
@@ -55,8 +55,27 @@ class CTCEX_Sermon {
 			);
 		}
 		
-		$posts = new WP_Query( $query );
+		// classes
+		$classes = array(
+			'container'  => 'ctcex-sermon-container',
+			'media'      => 'ctcex-sermon-media',
+			'details'    => 'ctcex-sermon-details',
+			'date'       => 'ctcex-sermon-date',
+			'speaker'    => 'ctcex-sermon-speaker',
+			'series'     => 'ctcex-sermon-series',
+			'topic'      => 'ctcex-sermon-topic',
+			'audio-link' => 'ctcex-sermon-audio-link',
+			'audio'      => 'ctcex-sermon-audio',
+			'video'      => 'ctcex-sermon-video',
+			'img'        => 'ctcex-sermon-img'
+		);
 		
+		// Filter the classes only instead of the whole shortcode
+		// Use: add_filter( 'ctcex_sermon_classes', '<<<callback>>>' ); 
+		$classes = apply_filters( 'ctcex_sermon_classes', $classes );
+		
+
+		$posts = new WP_Query( $query );		
 		if( $posts->have_posts() ){
 			while ( $posts->have_posts() ) :
 				$posts		-> the_post();
@@ -64,25 +83,6 @@ class CTCEX_Sermon {
 				$title 		= get_the_title() ;
 				$url 			= get_permalink();
 				$data = ctcex_get_sermon_data( $post_id );
-				
-				// classes
-				$classes = array(
-					'container'  => 'ctcex-sermon-container',
-					'media'      => 'ctcex-sermon-media',
-					'details'    => 'ctcex-sermon-details',
-					'date'       => 'ctcex-sermon-date',
-					'speaker'    => 'ctcex-sermon-speaker',
-					'series'     => 'ctcex-sermon-series',
-					'topic'      => 'ctcex-sermon-topic',
-					'audio-link' => 'ctcex-sermon-audio-link',
-					'audio'      => 'ctcex-sermon-audio',
-					'video'      => 'ctcex-sermon-video',
-					'img'        => 'ctcex-sermon-img'
-				);
-				
-				// Filter the classes only instead of the whole shortcode
-				// Use: add_filter( 'ctcex_sermon_classes', '<<<callback>>>' ); 
-				$classes = apply_filters( 'ctcex_sermon_classes', $classes );
 				
 				// Get date
 				$date_src = sprintf( '<div class="%s"><b>%s:</b> %s</div>', $classes[ 'date' ], __( 'Date', 'ctcex' ), get_the_date() );
@@ -114,7 +114,7 @@ class CTCEX_Sermon {
 				$img_overlay_js = $img_overlay_class ? sprintf(
 					'<script>
 						jQuery(document).ready( function($) {
-							//$( ".%s" ).css( "position", "relative" );
+							$( ".%s" ).css( "position", "relative" );
 							$( ".ctcex-overlay" ).css( "cursor", "pointer" );
 							var vid_src = \'%s\';
 							vid_src = vid_src.replace( "autoPlay=false", "autoPlay=true" );

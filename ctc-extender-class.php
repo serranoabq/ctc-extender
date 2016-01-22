@@ -46,6 +46,7 @@ class CTC_Extender {
 		require_once( sprintf( "%s/ctcex-taximages-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-cptnames-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-sermon-class.php", dirname(__FILE__) ) );
+		require_once( sprintf( "%s/ctcex-people-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-recurrence-class.php", dirname(__FILE__) ) );
 		
 		// Add calendar 
@@ -59,6 +60,9 @@ class CTC_Extender {
 		
 		// Add Sermon shortcode
 		new CTCEX_Sermon();
+		
+		// Add People shortcode
+		new CTCEX_People();
 	}
 	
 	

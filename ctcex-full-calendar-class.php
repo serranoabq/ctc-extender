@@ -287,12 +287,12 @@ class CTCEX_FullCalendar {
 		wp_enqueue_script( 'fullcalendar', '//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.3.1/fullcalendar.min.js', array( 'jquery', 'moment' ) );
 			
 		wp_enqueue_script( 'ctc-fullcalendar', 
-			plugins_url( 'ctc-fullcalendar.js' , __FILE__ ), array('fullcalendar') );
+			plugins_url( 'js/ctc-fullcalendar.js' , __FILE__ ), array('fullcalendar') );
 		
 		wp_enqueue_style( 'fullcalendar-css', '//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.3.1/fullcalendar.min.css' );
 		
 		wp_enqueue_style( 'ctc-fullcalendar', 
-			plugins_url( 'ctc-fullcalendar.css' , __FILE__ ) );
+			plugins_url( 'css/ctc-fullcalendar.css' , __FILE__ ) );
 	}
 	
 }
