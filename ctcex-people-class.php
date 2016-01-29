@@ -37,7 +37,7 @@ class CTCEX_People {
 		
 		extract( shortcode_atts( array(
 			'group' 	=>  '',  
-			'slider' 	=>  '',  
+			'slider' 	=>  false,  
 			), $attr ) );
 		
 		$this -> scripts( $slider );
@@ -62,17 +62,16 @@ class CTCEX_People {
 		
 		// classes
 		$classes = array(
-			'container'  => 'ctcex-people-container',
+			'container'  => 'ctcex-person-container',
 			'details'    => 'ctcex-person-details',
+			'title'      => 'ctcex-person-title',
 			'position'   => 'ctcex-person-position',
 			'email'      => 'ctcex-person-email',
-			'urls'       => 'ctcex-person-urls',
 			'urls'       => 'ctcex-person-urls',
 			'img'        => 'ctcex-person-img'
 		);
 		
-		if( $slider ) 
-			$classes[ 'container' ] .= ' ctcex_unslider';
+		//if( 'false'==$slider ) unset( $slider );
 		
 		// Filter the classes only instead of the whole shortcode
 		// Use: add_filter( 'ctcex_person_classes', '<<<callback>>>' ); 
@@ -80,7 +79,7 @@ class CTCEX_People {
 		
 		$posts = new WP_Query( $query );
 		if( $posts->have_posts() ){
-			$output = sprintf( '<div class="%s ctcex-container" style="overflow: hidden"><ul class="ctcex-people-list %s">', $classes[ 'container' ], $slider ? '' : 'no-slider' );
+			$output = sprintf( '<div id="ctcex-people" class="ctcex-people-list %s">', $slider ? 'ctcex-slider ctcex-hidden' : 'no-slider' );
 			
 			while ( $posts->have_posts() ) :
 				$posts		-> the_post();
@@ -106,18 +105,19 @@ class CTCEX_People {
 				
 				// Prepare output
 				$item_output = sprintf(
-					'<li class="%s">
+					'<div class="%s">
 						%s
 						<div class="%s">
-							<h2>%s</h2>
+							<h2 class="%s">%s</h2>
 							%s
 							%s
 						</div>
-					</li>
+					</div>
 					', 
 					$classes[ 'container' ],
 					$img_src,
 					$classes[ 'details' ],
+					$classes[ 'title' ],
 					$title,
 					$position_src,
 					$url_src
@@ -135,7 +135,7 @@ class CTCEX_People {
 		}
 		wp_reset_query();
 		
-		$output .= '</ul></div>';
+		$output .= '</div>';
 		
 		// Filter the final output only instead of the the individual person
 		// Use: add_filter( 'ctcex_people_output', '<<<callback>>>', 10, 3 ); 
@@ -148,7 +148,30 @@ class CTCEX_People {
 			$output .= '
 					<script>
 						jQuery(document).ready( function($) {
-							$( ".ctcex-container" ).unslider();
+							$( ".ctcex-people-list.slider" ).slick({
+								infinite: true,
+								slidesToShow: 3,
+								centerMode:true, 
+								autoplay:true, 
+								autoplaySpeed: 3000,
+								prevArrow: \'<span class="slick-prev"><i class="fa fa-arrow-circle-left"></i></span>\',
+								nextArrow: \'<span class="slick-next"><i class="fa fa-arrow-circle-right"></i></span>\',
+								responsive: [
+									{
+										breakpoint: 768,
+										settings: {
+											slidesToShow: 1
+										}
+									},
+									{
+										breakpoint: 320,
+										settings: {
+											slidesToShow: 1,
+											centerMode: false
+										}
+									}
+								]
+							});
 						})
 					</script>';
 		}
@@ -158,7 +181,12 @@ class CTCEX_People {
 	function scripts( $slider ){
 		
 		if( $slider ) {
-			
+			wp_enqueue_script( 'slick', 
+				'//cdn.jsdelivr.net/jquery.slick/1.5.9/slick.min.js', array( 'jquery' ) );
+			wp_enqueue_style( 'slick-css', 
+				'//cdn.jsdelivr.net/jquery.slick/1.5.9/slick.css' );
+			wp_enqueue_script( 'ctcex-people-js', 
+				plugins_url( 'js/ctcex-people.js' , __FILE__ ), array( 'jquery', 'slick' ) );
 		} 
 		wp_enqueue_style( 'ctcex-people', 
 			plugins_url( 'css/ctcex-people.css' , __FILE__ ) );

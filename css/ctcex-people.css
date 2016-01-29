@@ -1,24 +1,96 @@
-ul.ctcex-people-list.no-slider {
+.ctcex-people-list.no-slider {
 	margin: 0 0 1.5 em 0;
-	padding: 0;
-	list-style: none;
-	display: block;
-	clear: all;
-	width: 100%;
+	overflow:hidden;
 }
-ul.ctcex-people-list.no-slider > li{
+.ctcex-people-list.no-slider  > .ctcex-person-container {
 	display: block;
 	float: left;
 	width: 30%;
 	width: calc( 100% - 80px ) / 3;
 }
-ul.ctcex-people-list.no-slider > li:nth-of-type(1),
-ul.ctcex-people-list.no-slider > li:nth-of-type(3n+1) {
+.ctcex-people-list.no-slider > .ctcex-person-container:nth-of-type(1),
+.ctcex-people-list.no-slider > .ctcex-person-container:nth-of-type(3n+1) {
 	clear: left;
 	margin-right: 40px;
 }
-ul.ctcex-people-list.no-slider > li:nth-of-type(3n) {
+.ctcex-people-list.no-slider > .ctcex-person-container:nth-of-type(3n) {
 	margin-left: 40px;
+}
+.ctcex-person-img {
+  max-width: 90%;
+  margin: 5px auto;
+  max-height: 250px;
+  height: auto;
+  border-radius: 5px;
+}
+.ctcex-person-details {
+	text-align: center;
+}
+h2.ctcex-person-title {
+	margin-bottom: 0.5em;
+	line-height: 1em;
+	text-align: center;
+}
+h3.ctcex-person-position{
+	margin: 0.25em auto;
+	text-align: center;
+}
+
+.ctcex-hidden,
+.ctcex-hidden .ctcex-person-img {
+	height:1px !important;
+	overflow:hidden !important;
+	display: none;
+	visibility: hidden;
+}
+
+/* Slider */
+.ctcex-slider {
+  width: 100%;
+  margin: 50px auto;
+}
+.ctcex-slider .slick-slide {
+  width: 200px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 5px;
+  padding: 10px;
+  height: auto;
+  min-height:1px;
+  margin: 0 5px;
+  transition: all ease 1s;
+}
+.ctcex-slider .slick-track {
+  //padding: 30px 0;
+  display: flex;
+}
+
+
+/* Slick Navigation */
+.slick-arrow{
+  cursor: pointer;
+  opacity: 0.1;
+  position:absolute;
+  top:0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  color: white;
+  transition: all ease 0.5s;
+  font-size: 25px;
+}
+.slick-prev{
+  left: 0;
+  z-index: 10;
+}
+.slick-next{
+  right: 0;
+  z-index: 10;
+}
+.slick-arrow:hover{
+  opacity: 1.0;
+  background: rgba(0,0,0,0.5);
 }
 
 /* Socials */
