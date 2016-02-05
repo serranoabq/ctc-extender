@@ -269,7 +269,8 @@ class CTC_Extender {
 		// Check for a series image
 		$series = get_the_terms( $post_id, 'ctc_sermon_series' );
 		if( $series && ! is_wp_error( $series) ) {
-			$series = array_shift( array_values ( $series ) );
+			$series = array_values ( $series );
+			$series = array_shift( $series );
 			if ( get_option( 'ctc_tax_img_' . $series->term_id ) )
 				$img = get_option( 'ctc_tax_img_' . $series->term_id );
 		}
