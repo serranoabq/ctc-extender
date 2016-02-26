@@ -1,6 +1,6 @@
 <?php
 /*
-		Class to display the people in CTC through a shortcode
+		Class to add shortcode for displaying the CTC people
 */
 // No direct access
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -37,7 +37,8 @@ class CTCEX_People {
 		
 		extract( shortcode_atts( array(
 			'group' 	=>  '',  
-			'slider' 	=>  false,  
+			'slider' 	=>  false, 
+			'glyph'   =>  'fa', // either fa for fontawesome or gi for genericons
 			), $attr ) );
 		
 		$this -> scripts( $slider );
@@ -71,8 +72,6 @@ class CTCEX_People {
 			'img'        => 'ctcex-person-img'
 		);
 		
-		//if( 'false'==$slider ) unset( $slider );
-		
 		// Filter the classes only instead of the whole shortcode
 		// Use: add_filter( 'ctcex_person_classes', '<<<callback>>>' ); 
 		$classes = apply_filters( 'ctcex_person_classes', $classes );
@@ -92,7 +91,7 @@ class CTCEX_People {
 				$urls = explode( "\r\n", $data[ 'url' ] );
 				if( $data[ 'email' ] )
 					$urls[] = 'mailto:' . $data[ 'email' ];
-				$url_src = sprintf( '<div class="%s ctcex-socials"><ul>', $classes[ 'urls' ] );
+				$url_src = sprintf( '<div class="%s %s ctcex-socials"><ul>', $classes[ 'urls' ], $glyph === 'gi' ? 'gi' : 'fa' );
 				foreach( $urls as $url_item ){
 					$url_src .= sprintf( '<li><a href="%s">%s</a></li>', $url_item, $url_item );
 				}
@@ -125,8 +124,8 @@ class CTCEX_People {
 				
 				// Filter the output only instead of the whole shortcode
 				// Use: add_filter( 'ctcex_person_output', '<<<callback>>>', 10, 3 ); 
-				//  Args: output is the output to filter
-				//        topic is the topic passed on to the shortcode
+				//  Args: item_output is the output to filter
+				//        group is the group passed on to the shortcode
 				//        data is the person data
 				$item_output = apply_filters( 'ctcex_person_output', $item_output, $group, $data );
 				
@@ -140,12 +139,12 @@ class CTCEX_People {
 		// Filter the final output only instead of the the individual person
 		// Use: add_filter( 'ctcex_people_output', '<<<callback>>>', 10, 3 ); 
 		//  Args: output is the output to filter
-		//        group is the topic passed on to the shortcode
-		//        data is the person data
+		//        group is the group passed on to the shortcode
+		//        slider is the slider flag
 		$output = apply_filters( 'ctcex_people_output', $output, $group, $slider );
 		
 		if( $slider ){
-			$output .= '
+			$coutput = '
 					<script>
 						jQuery(document).ready( function($) {
 							$( ".ctcex-people-list.slider" ).slick({

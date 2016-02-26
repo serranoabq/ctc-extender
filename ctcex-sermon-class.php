@@ -1,6 +1,6 @@
 <?php
 /*
-		Class to add display the latest sermon
+		Class to add shortcode for displaying the latest sermon
 */
 // No direct access
 if ( ! defined( 'ABSPATH' ) ) exit;

@@ -1,10 +1,11 @@
-
+/*
+* People slider
+*/
 jQuery(document).ready( function($) {
-	$( ".ctcex-slider" ).on( 'init', function(e,s){
-		$( ".ctcex-hidden" ).removeClass( 'ctcex-hidden' );
-		console.log('here');
+	$( ".ctcex-people-list.ctcex-slider" ).on( 'init', function(e,s){
+		$( ".ctcex-people-list.ctcex-hidden" ).removeClass( 'ctcex-hidden' );
 	} );
-	$( ".ctcex-slider" ).slick({
+	$( ".ctcex-people-list.ctcex-slider" ).slick({
 		infinite: true,
 		autoplaySpeed: 3000,
 		slidesToShow: 3,

@@ -13,7 +13,9 @@ class CTC_Extender {
 		$this->version = '1.2.7';
 		
 		// Church Theme Content is REQUIRED
-		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
+		if ( ! class_exists( 'Church_Theme_Content' ) ) {
+			return;
+		}
 		
 		// Load plugin dependencies
 		add_action( 'plugins_loaded', array( $this, 'load_deps'), 18 );
@@ -36,6 +38,13 @@ class CTC_Extender {
 		add_action( 'save_post_ctc_event', array( $this, 'save_event_image' ), 13);
 		add_action( 'save_post_ctc_location', array( $this, 'save_location_image' ), 13);
 		add_action( 'save_post_ctc_person', array( $this, 'save_person_image' ), 13);		
+		
+		// Fix columns
+		add_action( 'manage_posts_custom_column' , array( $this, 'thumbnail_columns_content' ), 11 ); 
+		add_filter( 'manage_ctc_sermon_posts_columns' , array( $this, 'ctcex_thumnail_columns' ), 11 );
+		add_filter( 'manage_ctc_person_posts_columns' , array( $this, 'ctcex_thumnail_columns' ), 11 );
+		add_filter( 'manage_ctc_event_posts_columns' , array( $this, 'ctcex_thumnail_columns' ), 11 );
+		
 	}
 	
 	// Load plugin dependencies
@@ -47,6 +56,7 @@ class CTC_Extender {
 		require_once( sprintf( "%s/ctcex-cptnames-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-sermon-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-people-class.php", dirname(__FILE__) ) );
+		require_once( sprintf( "%s/ctcex-events-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-recurrence-class.php", dirname(__FILE__) ) );
 		
 		// Add calendar 
@@ -63,6 +73,9 @@ class CTC_Extender {
 		
 		// Add People shortcode
 		new CTCEX_People();
+		
+		// Add Events shortcode
+		new CTCEX_Events();
 	}
 	
 	
@@ -72,7 +85,9 @@ class CTC_Extender {
 *********************************************/
 	// Get sermon data for use in templates
 	function get_sermon_data( $post_id, $default_img = '' ){
-		if( empty( $post_id ) ) return;
+		if( empty( $post_id ) ) {
+			return;
+		}
 		
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
@@ -101,8 +116,9 @@ class CTC_Extender {
 			$speakers_A = array();
 			foreach ( $speakers as $speaker ) { $speakers_A[] = $speaker -> name; }
 			$last = array_pop($speakers_A);
-			if( $speakers_A )
+			if( $speakers_A ) {
 				$last = implode(', ', $speakers_A). ", and " .$last;
+			}
 			$ser_speakers = $last;
 		}
 		
@@ -138,7 +154,9 @@ class CTC_Extender {
 	}
 
 	function get_event_data( $post_id ){
-		if( empty( $post_id ) ) return;
+		if( empty( $post_id ) ) {
+			return;
+		}
 		
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
@@ -155,11 +173,14 @@ class CTC_Extender {
 		$venue = get_post_meta( $post_id, '_ctc_event_venue' , true ); 
 		$address = get_post_meta( $post_id, '_ctc_event_address' , true ); 
 		
-		$address_url = urlencode( harvest_option( 'city', 'Albuquerque' ) );
-		if( $address )  $address_url = urlencode( $address ); 
-		$map_img_url = "https://maps.googleapis.com/maps/api/staticmap?size=640x360&zoom=15&scale=2&center=$address_url&style=saturation:-25&markers=color:orange|$address_url";
-		$map_url = "http://maps.google.com/maps?q=$address_url";
-		$map_used = ( $map_img_url == $img );
+		$map_used = ! ( false === stripos( $img, 'maps.google.com' ) );
+		$map_url = null;
+		$map_img_url = null;
+		if( $map_used ) {
+			$address_url = urlencode( $address );
+			$map_url = "http://maps.google.com/maps?q=$address_url";
+			$map_img_url == $img ;
+		}
 		
 		$cats = get_the_terms( $post_id, 'ctc_event_category');
 		if( $cats && ! is_wp_error( $cats ) ) {
@@ -195,6 +216,9 @@ class CTC_Extender {
 
 	// Get location data for use in templates
 	function get_location_data( $post_id ){
+		if( empty( $post_id ) ) {
+			return;
+		}
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
 		
@@ -205,11 +229,14 @@ class CTC_Extender {
 		$slider = get_post_meta( $post_id, '_ctc_location_slider' , true ); 
 		$pastor = get_post_meta( $post_id, '_ctc_location_pastor' , true );  
 		
-		$address_url = urlencode( 'Albuquerque' );
-		if( $address )  $address_url = urlencode( $address ); 
-		$map_img_url = "https://maps.googleapis.com/maps/api/staticmap?size=640x360&zoom=15&scale=2&center=$address_url&style=saturation:-25&markers=color:orange|$address_url";
-		$map_url = "http://maps.google.com/maps?q=$address_url";
-		$map_used = ( $map_img_url == $img );
+		$map_used = ! ( false === stripos( $img, 'maps.google.com' ) );
+		$map_url = null;
+		$map_img_url = null;
+		if( $map_used ) {
+			$address_url = urlencode( $address );
+			$map_url = "http://maps.google.com/maps?q=$address_url";
+			$map_img_url == $img ;
+		}
 		
 		$data = array(
 			'name'        => get_the_title( $post_id ),
@@ -230,10 +257,13 @@ class CTC_Extender {
 
 	// Get person data for use in templates
 	function get_person_data( $post_id ){
-		if( empty( $post_id ) ) return;
+		if( empty( $post_id ) ) {
+			return;
+		}
 		
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
+		
 		// Person data
 		$position = get_post_meta( $post_id, '_ctc_person_position' , true ); 
 		$email = get_post_meta( $post_id, '_ctc_person_email' , true ); 
@@ -258,15 +288,14 @@ class CTC_Extender {
 	CTC images shortcuts
 *********************************************/
 	// Apply an image to a ctc_sermon post as meta data. 
-	// A default image can be given through the ctc_sermon_image 
-	// filter, if not an image attached to the post is used.
-	// Finally, if a taxonomy image is specified, then 
 	function save_sermon_image( $post_id ){
-		$img = apply_filters( 'ctc_sermon_image', '' );
-		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-wide' ); 
-		if( $thumbnail ) $img = $thumbnail[0];
+		// Image order:
+		// 1. Taxonomy image associated with the series, if available
+		// 2. Image through ctc_sermon_image filter
+		// 3. Featured image
 		
 		// Check for a series image
+		$img = NULL;
 		$series = get_the_terms( $post_id, 'ctc_sermon_series' );
 		if( $series && ! is_wp_error( $series) ) {
 			$series = array_values ( $series );
@@ -274,63 +303,116 @@ class CTC_Extender {
 			if ( get_option( 'ctc_tax_img_' . $series->term_id ) )
 				$img = get_option( 'ctc_tax_img_' . $series->term_id );
 		}
-		if( $img ) update_post_meta( $post_id, '_ctc_image', $img );
+		
+		// A theme can filter this if they want to 
+		$img = apply_filters( 'ctc_sermon_image', $img, $post_id );
+		
+		// Check for a featured image
+		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-wide' ); 
+		if( $thumbnail )	{
+			$img = $thumbnail[0];
+		}
+		
+		// Update post meta
+		if( is_null( $img ) ) {
+			delete_post_meta( $post_id, '_ctc_image' );
+		} else {
+			update_post_meta( $post_id, '_ctc_image', $img );
+		}
 	}
 	
 	// Apply an image to a ctc_event post as meta data. 
-	// A default map is used, followed by an image given through the 
-	// ctc_event_image filter, then an image attached to the post directly
 	function save_event_image( $post_id ){
-		// Check for an event address image
-		$img = apply_filters( 'ctc_event_image', '' );
+		// Image order:
+		// 1. Address map, if address is available
+		// 2. Image through ctc_event_image filter
+		// 3. Featured image
+				
+		// If there's an address, generate a map as a possible image
 		$address = get_post_meta( $post_id, '_ctc_event_address' , true ); 
-		$address_url = urlencode( 'New York' );
-		if( $address || empty( $img ) )  {
+		if( $address && empty( $img ) )  {
 			$address_url = urlencode( $address ); 
 			$map_img_url = "https://maps.googleapis.com/maps/api/staticmap?size=640x360&zoom=15&scale=2&center=$address_url&style=saturation:-25&markers=color:orange|$address_url";
 			$img = $map_img_url;
 		}
 		
-		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-wide' ); 
-		if( $thumbnail ) $img = $thumbnail[0];
+		// A theme can filter this if they want to
+		$img = apply_filters( 'ctc_event_image', $img, $post_id );
 		
-		if( $img ) update_post_meta( $post_id, '_ctc_image', $img );
+		// Check for a featured image
+		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-wide' ); 
+		if( $thumbnail ) {
+			$img = $thumbnail[0];
+		}
+				
+		// Update post meta
+		if( is_null( $img ) ) {
+			delete_post_meta( $post_id, '_ctc_image' );
+		} else {
+			update_post_meta( $post_id, '_ctc_image', $img );
+		}
 	}
 	
 	// Apply an image to a ctc_location post as meta data. 
-	// A default map is used, followed by an image given through the 
-	// ctc_location_image filter, then an image attached to the post directly
 	function save_location_image( $post_id ){
-		// Check for an event address image
+		// Image order:
+		// 1. Address map, if address is available
+		// 2. Image through ctc_location_image filter
+		// 3. Featured image
+		
+		// If there's an address, generate a map as a temporary image
 		$address = get_post_meta( $post_id, '_ctc_location_address' , true ); 
-		$address_url = urlencode(  'Albuquerque' );
-		if( $address )  $address_url = urlencode( $address ); 
-		$map_img_url = "https://maps.googleapis.com/maps/api/staticmap?size=640x360&zoom=15&scale=2&center=$address_url&style=saturation:-25&markers=color:orange|$address_url";
-		$img = $map_img_url;
+		if( $address && empty( $img ) )  {
+			$address_url = urlencode( $address ); 
+			$map_img_url = "https://maps.googleapis.com/maps/api/staticmap?size=640x360&zoom=15&scale=2&center=$address_url&style=saturation:-25&markers=color:orange|$address_url";
+			$img = $map_img_url;
+		}
 		
-		$img = apply_filters( 'ctc_location_image', $img );
+		// A theme can filter this if they want to
+		$img = apply_filters( 'ctc_location_image', $img, $post_id );
 		
+		// Check for a featured image
 		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-wide' ); 
+		if( $thumbnail ) {
+			$img = $thumbnail[0];
+		}
 		
-		if( $thumbnail ) $img = $thumbnail[0];
-		
-		if( $img ) update_post_meta( $post_id, '_ctc_image', $img );
+		// Update post meta
+		if( is_null( $img ) ) {
+			delete_post_meta( $post_id, '_ctc_image' );
+		} else {
+			update_post_meta( $post_id, '_ctc_image', $img );
+		}
 	}
 	
 	// Apply an image to a ctc_person post.
-	// Order is plugin folder, an image given through the ctc_person_image filter, or
-	// an image attached to the person post
 	function save_person_image( $post_id ){
+		// Image order:
+		// 1. Generic user image from plugin
+		// 2. Image through ctc_person_image filter
+		// 3. Featured image
+				
 		$img = plugin_dir_url( __FILE__ ) . 'user.png';
 		$gender = null;
-		if( isset( $_REQUEST['_ctc_person_gender'] ) ) 
-			$gender = $_REQUEST['_ctc_person_gender'];
-			
-		$img = apply_filters( 'ctc_person_image', $img, $gender );
-		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-tall' ); 
-		if( $thumbnail ) $img = $thumbnail[0];
+		if( isset( $_REQUEST[ '_ctc_person_gender' ] ) ) {
+			$gender = $_REQUEST[ '_ctc_person_gender' ];
+		}
 		
-		update_post_meta( $post_id, '_ctc_image', $img );
+		// Theme can override the image, based on gender
+		$img = apply_filters( 'ctc_person_image', $img, $gender );
+		
+		// Use featured image
+		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-tall' ); 
+		if( $thumbnail ) {
+			$img = $thumbnail[0];
+		}
+		
+		// Update post meta
+		if( is_null( $img ) ) {
+			delete_post_meta( $post_id, '_ctc_image' );
+		} else {
+			update_post_meta( $post_id, '_ctc_image', $img );
+		}
 	}
 	
 
@@ -389,10 +471,12 @@ class CTC_Extender {
 			'allow_html'	=> false, 
 			'visibility' 		=> array()
 		);
+		
 		if( count( $team ) > 1 ) {
 			$pastor[ 'type' ] = 'select';
 			$pastor[ 'options' ] = $team;
 		}
+		
 		$meta_box['fields'] = ctc_array_merge_after_key(
 			$meta_box['fields'], 
 			array( '_ctc_location_pastor' => $pastor ),
@@ -674,7 +758,33 @@ class CTC_Extender {
 
 	}
 	
+	// Replace the CTC thumbnail with our own
+	function ctcex_thumnail_columns( $columns ){
+		$insert_array = array();
+		$insert_array['ctcex_thumbnail'] = __( 'Thumbnail', 'ctcex' );
+		$columns = ctc_array_merge_after_key( $columns, $insert_array, 'cb' );
+		unset( $columns[ 'ctc_sermon_thumbnail' ] );
+		unset( $columns[ 'ctc_person_thumbnail' ] );
+		unset( $columns[ 'ctc_event_thumbnail' ] );
+		
+		return $columns;
+	}
 	
+	// Fix the column display for the right image
+	function thumbnail_columns_content( $column ) {
+		global $post;
+		if( 'ctcex_thumbnail' == $column ) {
+			$img = get_post_meta( $post->ID , '_ctc_image' , true );
+			if ( $img ) {
+				echo sprintf( 
+					'<a href="%s" style="display: block; background: url(%s); background-size: cover; height: 100px; width: 100px; background-position: 50%% 50%%;">&nbsp</a>', 
+					get_edit_post_link( $post->ID ),
+					$img );
+			}
+		}
+	}
+
+
 	
 	
 } 
