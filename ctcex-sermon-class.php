@@ -171,7 +171,7 @@ class CTCEX_Sermon {
 			endwhile; 
 		}
 		wp_reset_query();
-		echo $output;
+		return $output;
 	}
 
 }

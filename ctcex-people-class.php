@@ -174,7 +174,7 @@ class CTCEX_People {
 						})
 					</script>';
 		}
-		echo $output;
+		return $output;
 	}
 
 	function scripts( $slider ){

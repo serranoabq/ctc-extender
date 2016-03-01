@@ -340,7 +340,7 @@ class CTCEX_Events {
 		
 		$output = apply_filters( 'ctcex_eventslist_output', $output, $category );
 		
-		echo $output;
+		return $output;
 	}
 	
 }
