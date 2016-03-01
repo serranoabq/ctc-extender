@@ -1,3 +1,32 @@
+/* CTCEX Styles */ 
+
+/* CTCEX Events */
+table.ctcex-events-list {
+	margin: 0 auto;
+	border-radius: 5px;
+	background: rgba(0,0,0,0.2);
+}
+table.ctcex-events-list th { 
+	font-weight: bold; 
+	border-bottom: 1px solid #555;
+}
+table.ctcex-events-list td, th { padding: 10px; }
+/* table.ctcex-events-list tr:nth-child(odd) { background: #fff; } */
+/* table.ctcex-events-list tr:nth-child(even) { background: #eee; } */
+@media screen and (max-width: 600px){
+	table.ctcex-events-list thead { display:none }
+	table.ctcex-events-list td{ display: block; }
+	/* table.ctcex-events-list tr{ background: #fff } */
+	table.ctcex-events-list td:last-child { border-bottom: 1px solid #555; } 
+	table.ctcex-events-list tbody td:before{
+		content: attr(data-th);
+		font-weight: bold;
+		display: inline-block;
+		width: 6rem;
+	}
+}
+
+/* CTCEX People */
 .ctcex-people-list.no-slider {
 	margin: 0 0 1.5 em 0;
 	overflow:hidden;
@@ -36,6 +65,7 @@ h3.ctcex-person-position{
 	text-align: center;
 }
 
+/* Hidden */
 .ctcex-hidden,
 .ctcex-hidden .ctcex-person-img {
 	height:1px !important;
@@ -44,7 +74,8 @@ h3.ctcex-person-position{
 	visibility: hidden;
 }
 
-/* Slider */
+
+/* Slick Slider */
 .ctcex-slider {
   width: 100%;
   margin: 50px auto;
@@ -62,7 +93,6 @@ h3.ctcex-person-position{
 .ctcex-slider .slick-track {
   display: flex;
 }
-
 
 /* Slick Navigation */
 .slick-arrow{
@@ -94,6 +124,12 @@ h3.ctcex-person-position{
   background: rgba(0,0,0,0.5);
 }
 
+/* Genericons fix */
+.ctcex-event-details .genericon{
+	font-size: 1.2em;
+	vertical-align: middle;
+}
+
 /* Socials */
 .ctcex-socials ul{
 	list-style: none;
@@ -102,7 +138,6 @@ h3.ctcex-person-position{
 .ctcex-socials ul li{
 	display: inline;
 }
-
 .ctcex-socials li a[href*='wordpress.org'],
 .ctcex-socials li a[href*='facebook.com'],
 .ctcex-socials li a[href*='twitter.com'],

@@ -8,23 +8,28 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class CTCEX_Events {
 	
 	function __construct() {
-		$this->version = '1.0'; 
+		$this->version = '1.1'; 
 		
 		// Church Theme Content is REQUIRED
 		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
 		
 		add_shortcode( 'ctcex_events', array( $this, 'shortcode' ) );
+		add_shortcode( 'ctcex_events_list', array( $this, 'list_shortcode' ) );
 	}
 	
 	/*
-	 * Usage: [ctc_sermon] 
+	 * Usage: [ctcex_events] 
 	 *   Optional parameters:
-	 *     topic = (string)
-	 *       Slug of sermon topic to show
+	 *     category = (string)
+	 *       Event categories to display
+	 *     max_events = (number)
+	 *       Maximum number of events to display
+	 *     glyph = (string)
+	 *       Glyph font to use in display. 'fa' for font-awesome; 'gi' for genericons
 	 * @since 1.0
-	 * Parse shortcode and insert recent sermon
+	 * Upcoming event slider
 	 * @param string $attr Shortcode options
-	 * @return string Full sermon display
+	 * @return string Slider with upcoming events
 	 */
 	function shortcode( $attr ) {
 		// Filter to bypass this shortcode with a theme-designed shortcode handler
@@ -39,7 +44,7 @@ class CTCEX_Events {
 			'glyph' => 'fa',
 			), $attr ) );
 			
-		$this->scripts();
+		$this->slider_scripts();
 		
 		// do query 
 		$query = array(
@@ -98,17 +103,46 @@ class CTCEX_Events {
 
 				// Event date
 				$date_str = sprintf( '%s%s',  date_i18n( 'l, F j', strtotime( $data[ 'start' ] ) ), $data[ 'start' ] != $data[ 'end' ] ? ' - '. date_i18n( 'l, F j', strtotime( $data[ 'end' ] ) ) : '' );
-				$date_src = sprintf( '<div class="%s"><i class="%s calendar"></i> %s</div>', $classes[ 'date' ], $glyph === 'gi' ? 'gi' : 'fa', $date_str );
+				$date_src = sprintf( 
+					'<div class="%s"><i class="%s %s"></i> %s</div>', 
+					$classes[ 'date' ], 
+					$glyph === 'gi' ? 'genericon' : 'fa', 
+					$glyph === 'gi' ? 'genericon-month' : 'fa-calendar', 
+					$date_str );
 				
 				// Event time
 				$time_str = sprintf( '%s%s',  $data[ 'time' ], $data[ 'endtime' ] ? ' - '. $data[ 'endtime' ] : '' );
-				$time_src = sprintf( '<div class="%s"><i class="%s clock"></i> %s</div>', $classes[ 'time' ], $glyph === 'gi' ? 'gi' : 'fa', $time_str );
+				$time_src = '';
+				if( $time_str ) {
+					$time_src = sprintf( 
+						'<div class="%s"><i class="%s %s"></i> %s</div>', 
+						$classes[ 'time' ], 
+						$glyph === 'gi' ? 'genericon' : 'fa', 
+						$glyph === 'gi' ? 'genericon-time' : 'fa-clock-o', 
+						$time_str );
+				}
 				
 				// Event location
-				$location_src = sprintf( '<div class="%s"><i class="%s location"></i> %s</div>', $classes[ 'location' ], $glyph === 'gi' ? 'gi' : 'fa', $data[ 'address' ] );
+				$location_src = '';
+				if( $data[ 'address' ] ) {
+					$location_src = sprintf( 
+						'<div class="%s"><i class="%s %s"></i> %s</div>', 
+						$classes[ 'location' ], 
+						$glyph === 'gi' ? 'genericon' : 'fa', 
+						$glyph === 'gi' ? 'genericon-location' : 'fa-map-marker', 
+						$data[ 'address' ] );
+				}
 				
 				// Event categories
-				$categories_src = sprintf( '<div class="%s"><i class="%s tag"></i> %s</div>', $classes[ 'location' ], $glyph === 'gi' ? 'gi' : 'fa', $data[ 'categories' ] );
+				$categories_src = '';
+				if( $data[ 'categories' ] ) {
+					$categories_src = sprintf( 
+						'<div class="%s"><i class="%s %s-tag"></i> %s</div>', 
+						$classes[ 'location' ], 
+						$glyph === 'gi' ? 'genericon' : 'fa', 
+						$glyph === 'gi' ? 'genericon' : 'fa', 
+						$data[ 'categories' ] );
+				}
 				
 				// Get image
 				$img_src = $data[ 'img' ] ? sprintf( 
@@ -162,14 +196,153 @@ class CTCEX_Events {
 		
 		echo $output;
 	}
-	function scripts(){
+	
+	function slider_scripts(){
 		wp_enqueue_script( 'slick', 
 			'//cdn.jsdelivr.net/jquery.slick/1.5.9/slick.min.js', array( 'jquery' ) );
-		wp_enqueue_style( 'slick-css', 
-			'//cdn.jsdelivr.net/jquery.slick/1.5.9/slick.css' );
 		wp_enqueue_script( 'ctcex-events-js', 
 			plugins_url( 'js/ctcex-events.js' , __FILE__ ), array( 'jquery', 'slick' ) );
+		wp_enqueue_style( 'slick-css', 
+			'//cdn.jsdelivr.net/jquery.slick/1.5.9/slick.css' );
+		wp_enqueue_style( 'ctcex-styles', 
+			plugins_url( 'css/ctcex-styles.css' , __FILE__ ) );
 	}
+	
+	function list_scripts(){
+		wp_enqueue_script( 'ctcex-events-js', 
+			plugins_url( 'js/ctcex-events.js' , __FILE__ ), array( 'jquery', 'slick' ) );
+		wp_enqueue_style( 'ctcex-styles', 
+			plugins_url( 'css/ctcex-styles.css' , __FILE__ ) );
+	}
+	
+	/*
+	 * Usage: [ctcex_events_list] 
+	 *     category = (string)
+	 *       Event categories to display
+	 *     max_events = (number)
+	 *       Maximum number of events to display
+	 *     glyph = (string)
+	 *       Glyph font to use in display. 'fa' for font-awesome; 'gi' for genericons
+	 * @since 1.1
+	 * Upcoming event list
+	 * @param string $attr Shortcode options
+	 * @return string Events list
+	 */
+	function list_shortcode( $attr ) {
+		// Filter to bypass this shortcode with a theme-designed shortcode handler
+		// Use: add_filter( 'ctcex_events_list', '<<<callback>>>', 10, 2 ); 
+		$output = apply_filters( 'ctcex_events_list', '', $attr );
+	
+		if ( $output != '' ) return $output;
+		
+		extract( shortcode_atts( array(
+			'category' 	=>  '',  
+			'max_events'=>  -1, // default to all
+			), $attr ) );
+			
+		$this->list_scripts();
+		
+		// do query 
+		$query = array(
+			'post_type'      => 'ctc_event', 
+			'order'          => 'ASC',
+			'orderby'        => 'meta_value',
+			'meta_key'       => '_ctc_event_start_date_start_time',
+			'meta_type'      => 'DATETIME',
+			'posts_per_page' => $max_events, 
+			'meta_query'     => array(
+				array(
+					'key'     => '_ctc_event_end_date',
+					'value'   => date_i18n( 'Y-m-d' ), // today localized
+					'compare' => '>=', // later than today
+					'type'    => 'DATE',
+				),
+			), 
+		); 
+		
+		if( !empty( $category ) )  {
+			$query[ 'tax_query' ] = array( 
+				array(
+					'taxonomy'  => 'ctc_event_category',
+					'field'     => 'slug',
+					'terms'     => $category,
+				),
+			);
+		}
+		
+		// classes
+		$classes = array(
+			'container'  => 'ctcex-events-list-item',
+			'title'      => 'ctcex-event-title',
+			'date'       => 'ctcex-event-date',
+			'location'   => 'ctcex-event-location',
+		);
+		
+		// Filter the classes only instead of the whole shortcode
+		// Use: add_filter( 'ctcex_events_classes', '<<<callback>>>' ); 
+		$classes = apply_filters( 'ctcex_eventslist_classes', $classes );
+		
+
+		$posts = new WP_Query( $query );		
+		if( $posts->have_posts() ){
+			$output = '<table id="ctcex-events_list" class="ctcex-events-list"><thead><tr><th>Event</th><th>When?</th><th>Where?</th></tr></thead><tbody>';
+			while ( $posts->have_posts() ) :
+				$posts		-> the_post();
+				$post_id 	= get_the_ID();
+				$title 		= get_the_title() ;
+				$url 			= get_permalink();
+				$data = ctcex_get_event_data( $post_id );
+
+				// Event date
+				$date_str = sprintf( 
+					'%s%s',  
+					date_i18n( 'D, M j', strtotime( $data[ 'start' ] ) ),
+					$data[ 'time' ] ? ' @ ' . $data[ 'time' ] : ''
+				);
+				$date_src = sprintf( 
+					'<td class="%s" data-th="When?">%s</td>', 
+					$classes[ 'date' ], 
+					$date_str 
+				);
+				
+				// Event location
+				$location_src = sprintf( 
+					'<td class="%s" data-th="Where?">%s</td>', 
+					$classes[ 'location' ], 
+					$data[ 'address' ] ? $data[ 'address' ] : '' 
+				);
+								
+				// Prepare output
+				$item_output = sprintf(
+					'<tr class="%s">
+						<td class="%s" data-th="Event">%s</td>
+						%s
+						%s
+					</tr>
+					', 
+					$classes[ 'container' ],
+					$classes[ 'title' ],
+					$title,
+					$date_src,
+					$location_src
+				);
+				// Filter the output only instead of the whole shortcode
+				// Use: add_filter( 'ctcex_eventslist_item_output', '<<<callback>>>', 10, 3 ); 
+				//  Args: item_output is the output to filter
+				//        category is the category passed on to the shortcode
+				//        data is the sermon data
+				$item_output = apply_filters( 'ctcex_eventslist_item_output', $item_output, $category, $data );
+				$output .= $item_output;
+			endwhile; 
+		}
+		wp_reset_query();
+		$output .= '</tbody></table>';
+		
+		$output = apply_filters( 'ctcex_eventslist_output', $output, $category );
+		
+		echo $output;
+	}
+	
 }
 
 

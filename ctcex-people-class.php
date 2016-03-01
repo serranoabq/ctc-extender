@@ -187,8 +187,8 @@ class CTCEX_People {
 			wp_enqueue_script( 'ctcex-people-js', 
 				plugins_url( 'js/ctcex-people.js' , __FILE__ ), array( 'jquery', 'slick' ) );
 		} 
-		wp_enqueue_style( 'ctcex-people', 
-			plugins_url( 'css/ctcex-people.css' , __FILE__ ) );
+		wp_enqueue_style( 'ctcex-styles', 
+			plugins_url( 'css/ctcex-styles.css' , __FILE__ ) );
 	}
 }
 

@@ -10,13 +10,11 @@ class CTC_Extender {
 	
 	function __construct() {
 		// Version 
-		$this->version = '1.2.7';
+		$this->version = '1.4';
 		
 		// Church Theme Content is REQUIRED
-		if ( ! class_exists( 'Church_Theme_Content' ) ) {
-			return;
-		}
-		
+		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
+				
 		// Load plugin dependencies
 		add_action( 'plugins_loaded', array( $this, 'load_deps'), 18 );
 		
@@ -85,10 +83,8 @@ class CTC_Extender {
 *********************************************/
 	// Get sermon data for use in templates
 	function get_sermon_data( $post_id, $default_img = '' ){
-		if( empty( $post_id ) ) {
-			return;
-		}
-		
+		if( empty( $post_id ) ) return;
+				
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
 		$default_used = ( $img == $default_img ) && !empty( $img );
@@ -216,9 +212,8 @@ class CTC_Extender {
 
 	// Get location data for use in templates
 	function get_location_data( $post_id ){
-		if( empty( $post_id ) ) {
-			return;
-		}
+		if( empty( $post_id ) ) return;		
+		
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
 		
@@ -257,9 +252,7 @@ class CTC_Extender {
 
 	// Get person data for use in templates
 	function get_person_data( $post_id ){
-		if( empty( $post_id ) ) {
-			return;
-		}
+		if( empty( $post_id ) ) return;
 		
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
