@@ -235,11 +235,12 @@ class CTCEX_Events {
 	
 		if ( $output != '' ) return $output;
 		
+		error_log( 'ATTR: ' . json_encode($attr) );
 		extract( shortcode_atts( array(
-			'category' 	=>  '',  
-			'max_events'=>  -1, // default to all
+			'category' 	  =>  '',  
+			'max_events'  =>  -1, // default to all
+			'notfound'    =>  false, // show a message when no events are found
 			), $attr ) );
-			
 		$this->list_scripts();
 		
 		// do query 
@@ -276,6 +277,7 @@ class CTCEX_Events {
 			'title'      => 'ctcex-event-title',
 			'date'       => 'ctcex-event-date',
 			'location'   => 'ctcex-event-location',
+			'noevents'   => 'ctcex-no-events',
 		);
 		
 		// Filter the classes only instead of the whole shortcode
@@ -334,9 +336,16 @@ class CTCEX_Events {
 				$item_output = apply_filters( 'ctcex_eventslist_item_output', $item_output, $category, $data );
 				$output .= $item_output;
 			endwhile; 
+			$output .= '</tbody></table>';
+		} else {
+			if( $notfound ) {
+				$output = sprintf('<table id="ctcex-events_list" class="ctcex-events-list"><tr><td><p class="%s">%s</p></td></tr></table>',
+					$classes[ 'noevents' ],
+					__( 'Sorry no events of this category were found', 'ctcex' )
+				);
+			}
 		}
 		wp_reset_query();
-		$output .= '</tbody></table>';
 		
 		$output = apply_filters( 'ctcex_eventslist_output', $output, $category );
 		

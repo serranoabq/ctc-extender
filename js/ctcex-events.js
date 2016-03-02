@@ -12,5 +12,7 @@ jQuery(document).ready( function($) {
 		prevArrow: '<span class="slick-prev"><i class="fa fa-arrow-circle-left"></i></span>',
 		nextArrow: '<span class="slick-next"><i class="fa fa-arrow-circle-right"></i></span>'
 	});
+	
+	
 })
 
