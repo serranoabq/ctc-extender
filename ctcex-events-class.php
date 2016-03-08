@@ -235,7 +235,6 @@ class CTCEX_Events {
 	
 		if ( $output != '' ) return $output;
 		
-		error_log( 'ATTR: ' . json_encode($attr) );
 		extract( shortcode_atts( array(
 			'category' 	  =>  '',  
 			'max_events'  =>  -1, // default to all
