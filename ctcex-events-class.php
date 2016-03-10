@@ -156,12 +156,18 @@ class CTCEX_Events {
 					'</a>' 
 				) : '' ;
 				
+				$edit_link = get_edit_post_link( $post_id, 'link' );
+				$edit_link = $edit_link ? sprintf( '<a href="%s" class="alignright">%s</a>',
+						$edit_link, 
+						__( 'Edit event', 'ctcex' )
+						) : '';
 				// Prepare output
 				$item_output = sprintf(
 					'<div class="%s">
 						<div class="%s">%s</div>
 						<div class="%s">
 							<h3><a href="%s">%s</a></h3>
+							%s
 							%s
 							%s
 							%s
@@ -178,7 +184,8 @@ class CTCEX_Events {
 					$date_src,
 					$time_src,
 					$location_src,
-					$categories_src
+					$categories_src,
+					$edit_link
 				);
 				// Filter the output only instead of the whole shortcode
 				// Use: add_filter( 'ctcex_events_output', '<<<callback>>>', 10, 3 ); 
@@ -313,17 +320,24 @@ class CTCEX_Events {
 					$data[ 'address' ] ? $data[ 'address' ] : '' 
 				);
 								
+				$edit_link = get_edit_post_link( $post_id, 'link' );
+				$edit_link = $edit_link ? sprintf( ' (<a href="%s">%s</a>)',
+						$edit_link, 
+						__( 'Edit event', 'ctcex' )
+						) : '';
 				// Prepare output
 				$item_output = sprintf(
 					'<tr class="%s">
-						<td class="%s" data-th="Event">%s</td>
+						<td class="%s" data-th="Event"><a href="%s">%s</a>%s</td>
 						%s
 						%s
 					</tr>
 					', 
 					$classes[ 'container' ],
 					$classes[ 'title' ],
+					$url,
 					$title,
+					$edit_link,
 					$date_src,
 					$location_src
 				);
