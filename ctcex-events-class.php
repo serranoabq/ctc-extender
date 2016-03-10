@@ -123,14 +123,15 @@ class CTCEX_Events {
 				}
 				
 				// Event location
+				$location_txt = $data[ 'venue' ] ? $data[ 'venue' ] : $data[ 'address' ];
 				$location_src = '';
-				if( $data[ 'address' ] ) {
+				if( $location_txt ) {
 					$location_src = sprintf( 
 						'<div class="%s"><i class="%s %s"></i> %s</div>', 
 						$classes[ 'location' ], 
 						$glyph === 'gi' ? 'genericon' : 'fa', 
 						$glyph === 'gi' ? 'genericon-location' : 'fa-map-marker', 
-						$data[ 'address' ] );
+						$location_txt );
 				}
 				
 				// Event categories
@@ -314,10 +315,11 @@ class CTCEX_Events {
 				);
 				
 				// Event location
+				$location_txt = $data[ 'venue' ] ? $data[ 'venue' ] : $data[ 'address' ];
 				$location_src = sprintf( 
 					'<td class="%s" data-th="Where?">%s</td>', 
 					$classes[ 'location' ], 
-					$data[ 'address' ] ? $data[ 'address' ] : '' 
+					$location_txt ? $location_txt : '' 
 				);
 								
 				$edit_link = get_edit_post_link( $post_id, 'link' );
