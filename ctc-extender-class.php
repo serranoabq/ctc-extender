@@ -172,9 +172,11 @@ class CTC_Extender {
 		$map_used = ! ( false === stripos( $img, 'maps.google.com' ) );
 		$map_url = null;
 		$map_img_url = null;
-		if( $map_used ) {
+		if( $address ) {
 			$address_url = urlencode( $address );
 			$map_url = "http://maps.google.com/maps?q=$address_url";
+		}
+		if( $map_used ) {
 			$map_img_url == $img ;
 		}
 		
@@ -227,9 +229,11 @@ class CTC_Extender {
 		$map_used = ! ( false === stripos( $img, 'maps.google.com' ) );
 		$map_url = null;
 		$map_img_url = null;
-		if( $map_used ) {
+		if( $address ) {
 			$address_url = urlencode( $address );
 			$map_url = "http://maps.google.com/maps?q=$address_url";
+		}
+		if( $map_used ) {
 			$map_img_url == $img ;
 		}
 		
