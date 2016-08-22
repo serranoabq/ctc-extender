@@ -249,6 +249,7 @@ class CTC_Extender {
 			'map_url'		  => $map_url,
 			'map_img_url'	=> $map_img_url,
 			'map_used'    => $map_used,
+			'order'			  => get_post_field( 'menu_order', $post_id),
 		);
 		
 		return $data;
@@ -797,11 +798,5 @@ class CTC_Extender {
 			}
 		}
 	}
-
-
-	
 	
 } 
-
-
-
