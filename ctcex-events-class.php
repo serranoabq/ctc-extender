@@ -148,7 +148,7 @@ class CTCEX_Events {
 				// Get image
 				$img_src = $data[ 'img' ] ? sprintf( 
 					'%s
-						<img class="%s" src="%s" alt="%s"/>
+						<img class="%s" src="%s" alt="%s" width="960"/>
 					%s', 
 					$data[ 'map_used' ] ? '<a href="' . $data[ 'map_url' ] . '" target="_blank">' : '',
 					$classes[ 'img' ], 

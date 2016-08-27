@@ -10,7 +10,7 @@ class CTC_Extender {
 	
 	function __construct() {
 		// Version 
-		$this->version = '1.4';
+		$this->version = '1.4.1';
 		
 		// Church Theme Content is REQUIRED
 		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
@@ -268,6 +268,20 @@ class CTC_Extender {
 		$url = get_post_meta( $post_id, '_ctc_person_urls' , true ); 
 		$gender = get_post_meta( $post_id, '_ctc_person_gender' , true ); 
 		
+		$per_groups = '';
+		$groups_slug = '';
+		$groups = get_the_terms( $post_id, 'ctc_person_group');
+		if( $groups && ! is_wp_error( $groups ) ) {
+			$groups_A = array();
+			$groups_S = array();
+			foreach ( $groups as $group ) { 
+				$groups_A[] = $group -> name; 
+				$groups_S[] = $group -> slug; 
+			}
+			$per_groups = implode('; ', $groups_A);
+			$groups_slug = implode('; ', $groups_S);
+		}
+		
 		$data = array(
 			'name'      => get_the_title( $post_id ),
 			'permalink' => $permalink,
@@ -276,6 +290,9 @@ class CTC_Extender {
 			'email'     => $email,
 			'url'       => $url,
 			'gender'    => $gender,
+			'groups'    => $per_groups,
+			'groups_slug'    => $groups_slug,
+			'order'     => get_post_field( 'menu_order', $post_id),
 		);
 		
 		return $data;

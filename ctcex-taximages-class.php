@@ -167,7 +167,7 @@ if ( ! class_exists( 'CTCEX_TaxImages' ) ) {
 			if( $column_name != 'ctc_tax_image' ) return $out;
 			$imgsrc = get_option( 'ctc_tax_img_' . $term_id );
 			if( $imgsrc ) {
-				$img = '<img src="' .  $imgsrc .'" style="max-width:75px; max-height:75px;" />';
+				$img = '<img src="' .  $imgsrc .'" style="max-width:75px; max-height:75px;" width="75"/>';
 				$out = $img;
 			}
 			return $out; 

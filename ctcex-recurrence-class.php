@@ -32,6 +32,8 @@ if( class_exists( 'CT_Recurrence' ) ) {
 				'interval',
 				'monthly_type',
 				'monthly_week',
+				'weekly_type',
+				'weekly_day',
 				'limit',
 			);
 
@@ -124,6 +126,41 @@ if( class_exists( 'CT_Recurrence' ) ) {
 					$args['monthly_week'] = '';
 				}
 			}
+			
+			// Weekly Type (required when frequency is weekly)
+			if ( $args ) {
+				// Value is required
+				if ( 'weekly' == $args['frequency'] ) {
+					// Default to day if none
+					if ( empty( $args['weekly_type'] ) ) {
+						$args['weekly_type'] = 'day';
+					}
+					// Value is invalid
+					if ( ! in_array( $args['weekly_type'], array( 'day', 'multi' ) ) ) {
+						$args = false; // value is invalid
+					}
+				}
+				// Not required in this case
+				else {
+					$args['weekly_type'] = '';
+				}
+			}
+
+			// Weekly day (required when frequency is monthly and monthly_type is week)
+			if ( $args ) {
+				// Value is required
+				if ( 'weekly' == $args['frequency'] && 'multi' == $args['weekly_type'] ) {
+					// Is value valid?
+					if ( empty( $args['weekly_day'] ) || ! in_array( $args['weekly_day'], array( '0', '1', '2', '3', '4', '5', '6' ) ) ) {
+						$args = false; // value is invalid
+					}
+				}
+				// Not required in this case
+				else {
+					$args['weekly_day'] = '';
+				}
+			}
+
 
 			// Limit (optional)
 			if ( $args ) {
@@ -136,7 +173,7 @@ if( class_exists( 'CT_Recurrence' ) ) {
 					$args['limit'] = false;
 				}
 			}
-			
+
 			return $args;
 		}
 		

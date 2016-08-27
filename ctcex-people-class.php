@@ -100,7 +100,7 @@ class CTCEX_People {
 				$position_src = $data[ 'position' ] ? sprintf( '<h3 class="%s">%s</h3>', $classes[ 'position' ], $data[ 'position' ] ) : '';
 				
 				// Get image
-				$img_src = $data[ 'img' ] ? sprintf( '<img class="%s" src="%s" alt="%s"/>', $classes[ 'img' ], $data[ 'img' ], $title ) : '';
+				$img_src = $data[ 'img' ] ? sprintf( '<img class="%s" src="%s" alt="%s" width="200"/>', $classes[ 'img' ], $data[ 'img' ], $title ) : '';
 				
 				// Prepare output
 				$item_output = sprintf(
