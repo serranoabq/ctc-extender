@@ -34,7 +34,9 @@ class CTCEX_Sermon {
 		if ( $output != '' ) return $output;
 		
 		extract( shortcode_atts( array(
-			'topic' 	=>  '',  
+			'topic' 	=>  '',
+			'glyph'   =>  'fa', // either fa for fontawesome or gi for genericons			
+
 			), $attr ) );
 		
 		// do query 
@@ -73,7 +75,7 @@ class CTCEX_Sermon {
 		// Filter the classes only instead of the whole shortcode
 		// Use: add_filter( 'ctcex_sermon_classes', '<<<callback>>>' ); 
 		$classes = apply_filters( 'ctcex_sermon_classes', $classes );
-		
+
 
 		$posts = new WP_Query( $query );		
 		if( $posts->have_posts() ){
@@ -85,7 +87,7 @@ class CTCEX_Sermon {
 				$data = ctcex_get_sermon_data( $post_id );
 				
 				// Get date
-				$date_src = sprintf( '<div class="%s"><b>%s:</b> %s</div>', $classes[ 'date' ], __( 'Date', 'ctcex' ), get_the_date() );
+				$date_src = sprintf( '<div class="%s"><b> %s:</b> %s</div>', $classes[ 'date' ], __( 'Date', 'ctcex' ), get_the_date() );
 				
 				// Get speaker
 				$speaker_src = $data[ 'speakers' ] ? sprintf( '<div class="%s"><b>%s:</b> %s</div>', $classes[ 'speaker' ], __( 'Speaker', 'ctcex' ), $data[ 'speakers' ] ) : '';
@@ -112,7 +114,9 @@ class CTCEX_Sermon {
 				// Use the image as a placeholder for the video
 				$img_overlay_class = $data[ 'video' ] && $data[ 'img' ] ? 'ctcex-overlay' : '';
 				$img_overlay_js = $img_overlay_class ? sprintf(
-					'<script>
+					'<div class="ctcex-overlay">
+						<i class="' . ( $glyph === 'gi' ? 'genericon genericon-play' : 'fa fa-play' ) . '"></i>
+					</div><script>
 						jQuery(document).ready( function($) {
 							$( ".%s" ).css( "position", "relative" );
 							$( ".ctcex-overlay" ).css( "cursor", "pointer" );
@@ -120,17 +124,20 @@ class CTCEX_Sermon {
 							vid_src = vid_src.replace( "autoPlay=false", "autoPlay=true" );
 							$( ".ctcex-overlay" ).click( function(){
 								$( this ).hide();
-								$( ".ctcex-overlay" ).fadeOut( 400, function() {
+								$( ".ctcex-sermon-img" ).fadeOut( 200, function() {
 									$( this ).replaceWith( vid_src );
+									$( ".%s").addClass( "video_loaded" );
 								});
 							} );
 						})
 					</script>', 
 					$classes[ 'media' ],
-					$video_src ) : '' ;
+					$video_src, 
+					$classes[ 'media' ]
+					) : '' ;
 					
 				// Get image
-				$img_src = $data[ 'img' ] ? sprintf( '%s<img class="%s %s" src="%s" alt="%s" width="960"/>', $img_overlay_js, $classes[ 'img' ], $img_overlay_class, $data[ 'img' ], get_the_title() ) : '';
+				$img_src = $data[ 'img' ] ? sprintf( '%s<img class="%s" src="%s" alt="%s" width="960"/>', $img_overlay_js, $classes[ 'img' ], $data[ 'img' ], get_the_title() ) : '';
 				$video_src = $img_overlay_class ? $img_src : $video_src;
 				
 				$img_video_output = $video_src ? $video_src : $img_src . $audio_src;
