@@ -41,10 +41,11 @@ class CTCEX_Events {
 		extract( shortcode_atts( array(
 			'category' 	=>  '',  
 			'max_events'=>  5,
+			'slides' => 1,
 			'glyph' => 'fa',
 			), $attr ) );
 			
-		$this->slider_scripts();
+		$this->slider_scripts( $slides );
 		
 		// do query 
 		$query = array(
@@ -205,7 +206,7 @@ class CTCEX_Events {
 		echo $output;
 	}
 	
-	function slider_scripts(){
+	function slider_scripts( $slides = 1 ){
 		wp_enqueue_script( 'slick', 
 			'//cdn.jsdelivr.net/jquery.slick/1.5.9/slick.min.js', array( 'jquery' ) );
 		wp_enqueue_script( 'ctcex-events-js', 
@@ -214,6 +215,7 @@ class CTCEX_Events {
 			'//cdn.jsdelivr.net/jquery.slick/1.5.9/slick.css' );
 		wp_enqueue_style( 'ctcex-styles', 
 			plugins_url( 'css/ctcex-styles.css' , __FILE__ ) );
+		wp_localize_script( 'ctcex-events-js', 'ctcex_events', array( 'slides' => $slides ) );
 	}
 	
 	function list_scripts(){

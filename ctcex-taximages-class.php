@@ -8,10 +8,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 if ( ! class_exists( 'CTCEX_TaxImages' ) ) {
 	class CTCEX_TaxImages {
 		
-		function __construct() {
+		public $version;
+		
+		public $taxonomies = array( 'ctc_sermon_series' ) ;
+		
+		function __construct( $ctcex_version ) {
 			// Church Theme Content is REQUIRED
 			if ( ! class_exists( 'Church_Theme_Content' ) ) return;
 
+			$this->version = $ctcex_version;
+			$this->taxonomies = apply_filters( 'ctc_tax_img_taxonomies', $this->taxonomies );
+			
 			add_action('admin_head', array( $this, 'admin_head' ) ) ;
 			add_action('edit_term', array( $this, 'save_tax_img' ) );
 			add_action('create_term', array( $this, 'save_tax_img' ) );
@@ -24,12 +31,16 @@ if ( ! class_exists( 'CTCEX_TaxImages' ) ) {
 		 * @since 0.1
 		 */
 		function admin_head(){
+			
 			// This is the array of taxonomies to add an image to. 
 			// By default it applies only to the sermon series, but using the
 			// 'ctc_taxonomy_img_filter' filter, other taxonomies can be included
-			$taxonomies = array( 'ctc_sermon_series' ); 
-			$taxonomies = apply_filters( 'ctc_tax_img_taxonomies', $taxonomies ); // allow filtering
-
+			$taxonomies = $this->taxonomies;
+			
+			if( version_compare( $this->version, '1.4.1', '>' ) )	{
+				$this->upgrade();
+			}
+			
 			foreach( $taxonomies as $tax ) {
 				add_action( $tax . '_add_form_fields', array( $this, 'img_tax_field' ) );
 				add_action( $tax . '_edit_form_fields', array( $this, 'img_tax_field' ) );
@@ -171,6 +182,22 @@ if ( ! class_exists( 'CTCEX_TaxImages' ) ) {
 				$out = $img;
 			}
 			return $out; 
+		}
+		
+		function upgrade(){
+			// Upgrade the existing tax image to term_meta if the WP version allows it
+			if( ! function_exists( 'add_term_meta') ) return;
+			
+			foreach( $this->taxonomies as $tax ) {
+				$terms = get_terms( $tax );
+				foreach ( $terms as $term ) {
+					$id = $term->term_id;
+					$img = get_option( 'ctc_tax_img_' . $id );
+					if( $img ) {
+						$meta = update_term_meta( $id, $tax . '_image', $img );
+					}
+				}
+			}
 		}
 		
 	}

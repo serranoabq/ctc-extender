@@ -82,7 +82,7 @@ h3.ctcex-person-position{
 }
 .ctcex-slider .slick-slide {
   width: 200px;
-  background: rgba(0,0,0,0.2);
+  background: rgba(255,255,255,0.2);
   border-radius: 5px;
   padding: 10px;
   height: auto;
@@ -93,7 +93,11 @@ h3.ctcex-person-position{
 .ctcex-slider .slick-track {
   display: flex;
 }
-
+.ctcex-slider .ctcex-event-img{
+	position: relative;
+	top: 50%;
+	transform: translateY( -50% );
+}
 /* Slick Navigation */
 .slick-arrow{
   cursor: pointer;

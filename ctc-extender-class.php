@@ -10,7 +10,7 @@ class CTC_Extender {
 	
 	function __construct() {
 		// Version 
-		$this->version = '1.4.1';
+		$this->version = '1.4.2';
 		
 		// Church Theme Content is REQUIRED
 		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
@@ -61,7 +61,7 @@ class CTC_Extender {
 		new CTCEX_FullCalendar();	
 		
 		// Add Taxonomy Images
-		new CTCEX_TaxImages();
+		new CTCEX_TaxImages( $this->version );
 		
 		// Add Naming options
 		new CTCEX_CPTNames();
@@ -169,12 +169,12 @@ class CTC_Extender {
 		$venue = get_post_meta( $post_id, '_ctc_event_venue' , true ); 
 		$address = get_post_meta( $post_id, '_ctc_event_address' , true ); 
 		
-		$map_used = ! ( false === stripos( $img, 'maps.google.com' ) );
+		$map_used = ! ( false === stripos( $img, 'maps.googleapis.com' ) );
 		$map_url = null;
 		$map_img_url = null;
 		if( $address ) {
 			$address_url = urlencode( $address );
-			$map_url = "http://maps.google.com/maps?q=$address_url";
+			$map_url = "https://maps.google.com/maps?q=$address_url";
 		}
 		if( $map_used ) {
 			$map_img_url == $img ;
@@ -315,8 +315,9 @@ class CTC_Extender {
 		if( $series && ! is_wp_error( $series) ) {
 			$series = array_values ( $series );
 			$series = array_shift( $series );
-			if ( get_option( 'ctc_tax_img_' . $series->term_id ) )
-				$img = get_option( 'ctc_tax_img_' . $series->term_id );
+			$img = ctcex_tax_img_url( $series->term_id );
+			// if ( get_option( 'ctc_tax_img_' . $series->term_id ) )
+				// $img = get_option( 'ctc_tax_img_' . $series->term_id );
 		}
 		
 		// A theme can filter this if they want to 
@@ -345,12 +346,12 @@ class CTC_Extender {
 				
 		// If there's an address, generate a map as a possible image
 		$address = get_post_meta( $post_id, '_ctc_event_address' , true ); 
+		$img = '';
 		if( $address && empty( $img ) )  {
 			$address_url = urlencode( $address ); 
 			$map_img_url = "https://maps.googleapis.com/maps/api/staticmap?size=640x360&zoom=15&scale=2&center=$address_url&style=saturation:-25&markers=color:orange|$address_url";
 			$img = $map_img_url;
 		}
-		
 		// A theme can filter this if they want to
 		$img = apply_filters( 'ctc_event_image', $img, $post_id );
 		
