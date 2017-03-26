@@ -87,6 +87,7 @@ class CTC_Extender {
 				
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
+		$img_id = get_post_meta( $post_id, '_ctc_image_id' , true ); 
 		$default_used = ( $img == $default_img ) && !empty( $img );
 		
 		// Sermon data
@@ -133,6 +134,7 @@ class CTC_Extender {
 		$data = array(
 			'permalink'   => $permalink,
 			'img'         => $img,
+			'img_id'      => $img_id,
 			'default_used'=> $default_used,
 			'name'        => get_the_title( $post_id ),
 			'series'      => $ser_series,
@@ -156,6 +158,7 @@ class CTC_Extender {
 		
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
+		$img_id = get_post_meta( $post_id, '_ctc_image_id' , true ); 
 		
 		// Event data
 		$start = get_post_meta( $post_id, '_ctc_event_start_date' , true ); 
@@ -195,6 +198,7 @@ class CTC_Extender {
 			'name'             => get_the_title( $post_id ),
 			'permalink'        => $permalink,
 			'img'              => $img,
+			'img_id'           => $img_id,
 			'address'          => $address,
 			'venue'            => $venue,
 			'categories'       => $categories,
@@ -241,6 +245,7 @@ class CTC_Extender {
 			'name'        => get_the_title( $post_id ),
 			'permalink'   => $permalink,
 			'img'         => $img,
+			'img_id'      => $img_id,
 			'slider'      => $slider,
 			'address'     => $address,
 			'phone'       => $phone,
@@ -327,13 +332,19 @@ class CTC_Extender {
 		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-wide' ); 
 		if( $thumbnail )	{
 			$img = $thumbnail[0];
+			$img_id = get_post_thumbnail_id( $post_id );
 		}
 		
 		// Update post meta
 		if( is_null( $img ) ) {
 			delete_post_meta( $post_id, '_ctc_image' );
+			delete_post_meta( $post_id, '_ctc_image_id' );
 		} else {
+			if( ! $img_id ) 
+				$img_id = $this->get_attachment_id( $img );
+			
 			update_post_meta( $post_id, '_ctc_image', $img );
+			update_post_meta( $post_id, '_ctc_image_id', $img_id );
 		}
 	}
 	
@@ -364,8 +375,13 @@ class CTC_Extender {
 		// Update post meta
 		if( is_null( $img ) ) {
 			delete_post_meta( $post_id, '_ctc_image' );
+			delete_post_meta( $post_id, '_ctc_image_id' );
 		} else {
+			if( ! $img_id ) 
+				$img_id = $this->get_attachment_id( $img );
+			
 			update_post_meta( $post_id, '_ctc_image', $img );
+			update_post_meta( $post_id, '_ctc_image_id', $img_id );
 		}
 	}
 	
@@ -391,13 +407,19 @@ class CTC_Extender {
 		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-wide' ); 
 		if( $thumbnail ) {
 			$img = $thumbnail[0];
+			$img_id = get_post_thumbnail_id( $post_id );
 		}
 		
 		// Update post meta
 		if( is_null( $img ) ) {
 			delete_post_meta( $post_id, '_ctc_image' );
+			delete_post_meta( $post_id, '_ctc_image_id' );
 		} else {
+			if( ! $img_id ) 
+				$img_id = $this->get_attachment_id( $img );
+			
 			update_post_meta( $post_id, '_ctc_image', $img );
+			update_post_meta( $post_id, '_ctc_image_id', $img_id );
 		}
 	}
 	
@@ -421,13 +443,19 @@ class CTC_Extender {
 		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-tall' ); 
 		if( $thumbnail ) {
 			$img = $thumbnail[0];
+			$img_id = get_post_thumbnail_id( $post_id );
 		}
 		
 		// Update post meta
 		if( is_null( $img ) ) {
 			delete_post_meta( $post_id, '_ctc_image' );
+			delete_post_meta( $post_id, '_ctc_image_id' );
 		} else {
+			if( ! $img_id ) 
+				$img_id = $this->get_attachment_id( $img );
+			
 			update_post_meta( $post_id, '_ctc_image', $img );
+			update_post_meta( $post_id, '_ctc_image_id', $img_id );
 		}
 	}
 	
@@ -800,4 +828,43 @@ class CTC_Extender {
 		}
 	}
 	
+	// Get image attachment id to allow use of wp_get_attachment_image
+	function get_attachment_id( $url ) {
+		$attachment_id = 0;
+		$dir = wp_upload_dir();
+
+		if ( false !== strpos( $url, $dir['baseurl'] . '/' ) ) { // Is URL in uploads directory?
+			$file = basename( $url );
+
+			$query_args = array(
+				'post_type'   => 'attachment',
+				'post_status' => 'inherit',
+				'fields'      => 'ids',
+				'meta_query'  => array(
+					array(
+						'value'   => $file,
+						'compare' => 'LIKE',
+						'key'     => '_wp_attachment_metadata',
+					),
+				)
+			);
+
+			$query = new WP_Query( $query_args );
+			if ( $query->have_posts() ) {
+				foreach ( $query->posts as $post_id ) {
+					$meta = wp_get_attachment_metadata( $post_id );
+					$original_file       = basename( $meta['file'] );
+					$cropped_image_files = wp_list_pluck( $meta['sizes'], 'file' );
+
+					if ( $original_file === $file || in_array( $file, $cropped_image_files ) ) {
+						$attachment_id = $post_id;
+						break;
+					}
+
+				}
+			}
+		}
+		return $attachment_id;
+	}
+
 } 
