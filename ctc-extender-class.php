@@ -370,6 +370,7 @@ class CTC_Extender {
 		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'ctc-wide' ); 
 		if( $thumbnail ) {
 			$img = $thumbnail[0];
+			$img_id = get_post_thumbnail_id( $post_id );
 		}
 				
 		// Update post meta
