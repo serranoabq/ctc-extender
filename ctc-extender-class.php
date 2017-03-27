@@ -222,6 +222,7 @@ class CTC_Extender {
 		
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
+		$img_id = get_post_meta( $post_id, '_ctc_image_id' , true ); 
 		
 		// Location data
 		$address = get_post_meta( $post_id, '_ctc_location_address' , true ); 
@@ -266,6 +267,7 @@ class CTC_Extender {
 		
 		$permalink = get_permalink( $post_id );
 		$img = get_post_meta( $post_id, '_ctc_image' , true ); 
+		$img_id = get_post_meta( $post_id, '_ctc_image_id' , true ); 
 		
 		// Person data
 		$position = get_post_meta( $post_id, '_ctc_person_position' , true ); 
@@ -292,6 +294,7 @@ class CTC_Extender {
 			'name'      => get_the_title( $post_id ),
 			'permalink' => $permalink,
 			'img'       => $img,
+			'img_id'    => $img_id,
 			'position'  => $position,
 			'email'     => $email,
 			'url'       => $url,
@@ -340,11 +343,11 @@ class CTC_Extender {
 			delete_post_meta( $post_id, '_ctc_image' );
 			delete_post_meta( $post_id, '_ctc_image_id' );
 		} else {
-			if( ! $img_id ) 
-				$img_id = $this->get_attachment_id( $img );
 			
 			update_post_meta( $post_id, '_ctc_image', $img );
-			update_post_meta( $post_id, '_ctc_image_id', $img_id );
+			$img_id = ! empty( $img_id ) ? $img_id : $this->get_attachment_id( $img );
+			if( ! empty( $img_id ) ) 
+				update_post_meta( $post_id, '_ctc_image_id', $img_id );
 		}
 	}
 	
@@ -379,10 +382,10 @@ class CTC_Extender {
 			delete_post_meta( $post_id, '_ctc_image_id' );
 		} else {
 			if( ! $img_id ) 
-				$img_id = $this->get_attachment_id( $img );
-			
 			update_post_meta( $post_id, '_ctc_image', $img );
-			update_post_meta( $post_id, '_ctc_image_id', $img_id );
+			$img_id = ! empty( $img_id ) ? $img_id : $this->get_attachment_id( $img );
+			if( ! empty( $img_id ) ) 
+				update_post_meta( $post_id, '_ctc_image_id', $img_id );
 		}
 	}
 	
@@ -416,11 +419,10 @@ class CTC_Extender {
 			delete_post_meta( $post_id, '_ctc_image' );
 			delete_post_meta( $post_id, '_ctc_image_id' );
 		} else {
-			if( ! $img_id ) 
-				$img_id = $this->get_attachment_id( $img );
-			
 			update_post_meta( $post_id, '_ctc_image', $img );
-			update_post_meta( $post_id, '_ctc_image_id', $img_id );
+			$img_id = ! empty( $img_id ) ? $img_id : $this->get_attachment_id( $img );
+			if( ! empty( $img_id ) ) 
+				update_post_meta( $post_id, '_ctc_image_id', $img_id );
 		}
 	}
 	
@@ -452,11 +454,10 @@ class CTC_Extender {
 			delete_post_meta( $post_id, '_ctc_image' );
 			delete_post_meta( $post_id, '_ctc_image_id' );
 		} else {
-			if( ! $img_id ) 
-				$img_id = $this->get_attachment_id( $img );
-			
 			update_post_meta( $post_id, '_ctc_image', $img );
-			update_post_meta( $post_id, '_ctc_image_id', $img_id );
+			$img_id = ! empty( $img_id ) ? $img_id : $this->get_attachment_id( $img );
+			if( ! empty( $img_id ) ) 
+				update_post_meta( $post_id, '_ctc_image_id', $img_id );
 		}
 	}
 	
