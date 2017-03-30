@@ -83,8 +83,6 @@ function ctcex_has_option( $option ) {
 
 function ctcex_tax_img_url( $term_id = NULL ) {
 	global $CTCEX;
-	error_log( "TERM ID: $term_id" );
-	error_log( 'CTCEX: ' . json_encode($CTCEX));
 	// if( $term_id )
 		// $imgsrc = get_option( 'ctc_tax_img_' . $term_id );
 	// elseif( is_tax() ) {	
@@ -98,8 +96,7 @@ function ctcex_tax_img_url( $term_id = NULL ) {
 	}
 	$imgsrc = ''; 
 	if( $term_id ){
-		error_log(version_compare( $CTCEX->version, '1.4.1', '>' ));
-		$imgsrc = version_compare( $CTCEX->version, '1.4.1', '>' ) ? get_term_meta( $term_id, 'ctc_sermon_series_image', true ) : get_option( 'ctc_tax_img_' . $term_id );
+	$imgsrc = version_compare( $CTCEX->version, '1.4.1', '>' ) ? get_term_meta( $term_id, 'ctc_sermon_series_image', true ) : get_option( 'ctc_tax_img_' . $term_id );
 	} 
 
 	// Allow filtering with add_filter( 'ctcex_tax_img_url_filter', 'some_func', 10, 2 ) 
