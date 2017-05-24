@@ -808,7 +808,7 @@ class CTC_Extender {
 	function ctcex_thumnail_columns( $columns ){
 		$insert_array = array();
 		$insert_array['ctcex_thumbnail'] = __( 'Thumbnail', 'ctcex' );
-		$columns = ctc_array_merge_after_key( $columns, $insert_array, 'cb' );
+		$columns = ctc_array_merge_after_key( $columns, $insert_array, 'date' );
 		unset( $columns[ 'ctc_sermon_thumbnail' ] );
 		unset( $columns[ 'ctc_person_thumbnail' ] );
 		unset( $columns[ 'ctc_event_thumbnail' ] );
@@ -821,11 +821,13 @@ class CTC_Extender {
 		global $post;
 		if( 'ctcex_thumbnail' == $column ) {
 			$img = get_post_meta( $post->ID , '_ctc_image' , true );
-			if ( $img ) {
-				echo sprintf( 
-					'<a href="%s" style="display: block; background: url(%s); background-size: cover; height: 100px; width: 100px; background-position: 50%% 50%%;">&nbsp</a>', 
-					get_edit_post_link( $post->ID ),
-					$img );
+			if ( $img ) { ?>
+				<div style="width:100%; max-width: 100px; max-height: 100%">
+					<a href="<?php echo get_edit_post_link( $post->ID ); ?>">
+						<img src="<?php echo $img; ?>" style="display: block; width: 100%;" />
+					</a>
+				</div>
+			<?php 
 			}
 		}
 	}
