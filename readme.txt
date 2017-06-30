@@ -2,7 +2,7 @@
 Contributors: serranoabq
 Tags: church, churches, events, calendar, 
 Requires at least: 3.6
-Tested up to: 4.1
+Tested up to: 4.8
 Stable tag: trunk
 License: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -26,5 +26,4 @@ Please see [Installing Plugins](http://codex.wordpress.org/Managing_Plugins#Inst
 1.2   - Add category option to full calendar
 1.2.5 - Add gender field to ctc_person
 1.2.7 - Minor fixes. Improved? i18n
-1.4   - Added groups
-1.4.1 - Added img widths
+1.3   - Added groups, img width, Improved taxonomy images
