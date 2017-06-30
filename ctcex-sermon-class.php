@@ -5,87 +5,133 @@
 // No direct access
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class CTCEX_Sermon {
+if( ! class_exists( 'CTCEX_Sermon' ) ) {
 	
-	function __construct() {
-		$this->version = '1.0'; 
+	class CTCEX_Sermon {
 		
-		// Church Theme Content is REQUIRED
-		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
+		public $version = '1.1';
 		
-		add_shortcode( 'ctcex_sermon', array( $this, 'shortcode' ) );
-	}
-	
-	/*
-	 * Usage: [ctc_sermon] 
-	 *   Optional parameters:
-	 *     topic = (string)
-	 *       Slug of sermon topic to show
-	 * @since 1.0
-	 * Parse shortcode and insert recent sermon
-	 * @param string $attr Shortcode options
-	 * @return string Full sermon display
-	 */
-	function shortcode( $attr ) {
-		// Filter to bypass this shortcode with a theme-designed shortcode handler
-		// Use: add_filter( 'ctcex_sermon', '<<<callback>>>', 10, 2 ); 
-		$output = apply_filters( 'ctcex_sermon', '', $attr );
-	
-		if ( $output != '' ) return $output;
-		
-		extract( shortcode_atts( array(
-			'topic' 	=>  '',
-			'glyph'   =>  'fa', // either fa for fontawesome or gi for genericons			
-
-			), $attr ) );
-		
-		// do query 
-		$query = array(
-			'post_type' 				=> 'ctc_sermon', 
-			'order' 						=> 'DESC',
-			'orderby' 					=> 'date',
-			'posts_per_page'		=> 1,
-		); 
-		
-		if( !empty( $topic ) )  {
-			$query[ 'tax_query' ] = array( 
-				array(
-					'taxonomy'  => 'ctc_sermon_topic',
-					'field'     => 'slug',
-					'terms'     => $topic,
-				),
-			);
+		function __construct() {
+			
+			// Church Theme Content is REQUIRED
+			if ( ! class_exists( 'Church_Theme_Content' ) ) return;
+			
+			add_shortcode( 'ctcex_sermon', array( $this, 'shortcode' ) );
 		}
 		
-		// classes
-		$classes = array(
-			'container'  => 'ctcex-sermon-container',
-			'media'      => 'ctcex-sermon-media',
-			'details'    => 'ctcex-sermon-details',
-			'date'       => 'ctcex-sermon-date',
-			'speaker'    => 'ctcex-sermon-speaker',
-			'series'     => 'ctcex-sermon-series',
-			'topic'      => 'ctcex-sermon-topic',
-			'audio-link' => 'ctcex-sermon-audio-link',
-			'audio'      => 'ctcex-sermon-audio',
-			'video'      => 'ctcex-sermon-video',
-			'img'        => 'ctcex-sermon-img'
-		);
+		/*
+		 * Recent sermon shortcode
+		 *
+		 * Usage: 
+		 * [ctc_sermon] 
+		 *   Optional parameters:
+		 *     topic = (string) Slug of sermon topic to show
+		 *
+		 * @since 1.0
+		 * @param  string  $attr          Shortcode options
+		 * @return string                 Full sermon display
+		 */
+		function shortcode( $attr ) {
 		
-		// Filter the classes only instead of the whole shortcode
-		// Use: add_filter( 'ctcex_sermon_classes', '<<<callback>>>' ); 
-		$classes = apply_filters( 'ctcex_sermon_classes', $classes );
+			extract( shortcode_atts( array(
+				'topic' 	=>  '',
+				'glyph'   =>  'fa', // either fa for fontawesome or gi for genericons			
 
+				), $attr ) );
+		
+			$sermon_data = $this->get_query( $topic );
+			
+			// Filter the output only instead of the whole shortcode
+			// Note: This filters the whole shortcode. Any styles and scripts needed by the 
+			//       new ouput will have to be included in the filtering function
+			// Use: add_filter( 'ctcex_sermon_output', '<<<callback>>>', 10, 3 ); 
+			// Args: first argument is the output to filter; empty
+			//       <sermon_data> is the data extracted from sermon query
+			//       <glyph> is the glyph indicated in the shortcode
+			$output = apply_filters( 'ctcex_sermon_shortcode', '', $sermon_data, $glyph );
+		
+			if( empty( $output ) ) 
+				$output = $this->get_output( $sermon_data, $glyph );
+			
+			return $output;
+			
+		}
 
-		$posts = new WP_Query( $query );		
-		if( $posts->have_posts() ){
-			while ( $posts->have_posts() ) :
-				$posts		-> the_post();
-				$post_id 	= get_the_ID();
-				$title 		= get_the_title() ;
-				$url 			= get_permalink();
-				$data = ctcex_get_sermon_data( $post_id );
-				
+		/**
+		 * Perform sermon query
+		 *
+		 * @since  1.1
+		 * @param  string  $topic       Sermon topic to query (slug)
+		 * @return mixed                Array of sermon data  
+		 */
+		function get_query( $topic = '' ){
+			
+			// do query 
+			$query = array(
+				'post_type' 				=> 'ctc_sermon', 
+				'order' 						=> 'DESC',
+				'orderby' 					=> 'date',
+				'posts_per_page'		=> 1,
+			); 
+			
+			if( ! empty( $topic ) )  {
+				$query[ 'tax_query' ] = array( 
+					array(
+						'taxonomy'  => 'ctc_sermon_topic',
+						'field'     => 'slug',
+						'terms'     => $topic,
+					),
+				);
+			}
+			
+			$posts = new WP_Query( $query );		
+			if( $posts->have_posts() ):
+				while ( $posts->have_posts() ) :
+					
+					$data = ctcex_get_sermon_data( get_the_ID() );
+					
+				endwhile;
+			endif;
+			
+			wp_reset_query();
+			
+			return $data;
+			
+		}
+		
+		/**
+		 * Generate output to display
+		 *
+		 * @since  1.1
+		 * @param  mixed   $sermon_data  Sermon data returned from get_query
+		 * @param  string  $glyph        'fa' or 'gi' to use fontawesome or genericons
+		 * @return string                Shortcode output
+		 */
+		function get_output( $sermon_data, $glyph ){
+			
+			// classes
+			$classes = array(
+				'container'  => 'ctcex-sermon-container',
+				'media'      => 'ctcex-sermon-media',
+				'details'    => 'ctcex-sermon-details',
+				'date'       => 'ctcex-sermon-date',
+				'speaker'    => 'ctcex-sermon-speaker',
+				'series'     => 'ctcex-sermon-series',
+				'topic'      => 'ctcex-sermon-topic',
+				'audio-link' => 'ctcex-sermon-audio-link',
+				'audio'      => 'ctcex-sermon-audio',
+				'video'      => 'ctcex-sermon-video',
+				'img'        => 'ctcex-sermon-img'
+			);
+			
+			// Filter the classes only instead of the whole shortcode
+			// Use: add_filter( 'ctcex_sermon_classes', '<<<callback>>>' ); 
+			$classes = apply_filters( 'ctcex_sermon_classes', $classes );
+			
+			$output = ''; 
+			
+			foreach( $sermon_data as $data ){
+					
 				// Get date
 				$date_src = sprintf( '<div class="%s"><b> %s:</b> %s</div>', $classes[ 'date' ], __( 'Date', 'ctcex' ), get_the_date() );
 				
@@ -137,7 +183,7 @@ class CTCEX_Sermon {
 					) : '' ;
 					
 				// Get image
-				$img_src = $data[ 'img' ] ? sprintf( '%s<img class="%s" src="%s" alt="%s" width="960"/>', $img_overlay_js, $classes[ 'img' ], $data[ 'img' ], get_the_title() ) : '';
+				$img_src = $data[ 'img' ] ? sprintf( '%s<img class="%s" src="%s" alt="%s" width="960"/>', $img_overlay_js, $classes[ 'img' ], $data[ 'img' ], $data[ 'name' ] ) : '';
 				$video_src = $img_overlay_class ? $img_src : $video_src;
 				
 				$img_video_output = $video_src ? $video_src : $img_src . $audio_src;
@@ -159,8 +205,8 @@ class CTCEX_Sermon {
 					$classes[ 'media' ],
 					$img_video_output,
 					$classes[ 'details' ],
-					$url,
-					$title,
+					$data[ 'permalink' ],
+					$data[ 'name' ],
 					$date_src,
 					$speaker_src,
 					$series_src,
@@ -168,20 +214,13 @@ class CTCEX_Sermon {
 					$audio_link_src
 				);
 				
-				// Filter the output only instead of the whole shortcode
-				// Use: add_filter( 'ctcex_sermon_output', '<<<callback>>>', 10, 3 ); 
-				//  Args: output is the output to filter
-				//        topic is the topic passed on to the shortcode
-				//        data is the sermon data
-				$output = apply_filters( 'ctcex_sermon_output', $output, $topic, $data );
-				
-			endwhile; 
+			}
+			
+			return $output;
+			
 		}
-		wp_reset_query();
-		return $output;
+		
 	}
 
 }
-
-
-	
+		

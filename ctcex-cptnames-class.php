@@ -28,6 +28,11 @@ class CTCEX_CPTNames {
 		
 	}
 
+	/**
+	 * Add admin menu entry
+	 *
+	 * @since  1.0
+	 */
 	function add_admin_menu() { 
 		add_options_page( 
 			'CTC Extender', 
@@ -37,6 +42,11 @@ class CTCEX_CPTNames {
 			array( $this, 'options_page' ) );
 	}
 
+	/**
+	 * Initialize settings
+	 *
+	 * @since  1.0
+	 */
 	function settings_init() { 
 
 		register_setting( 'ctcexSettings', 'ctcex_settings', array( $this, 'validate_settings' ) );
@@ -123,6 +133,12 @@ class CTCEX_CPTNames {
 
 	}
 
+	/**
+	 * Display the option text field
+	 *
+	 * @since  1.0
+	 * @params mixed $args  Arguments
+	 */
 	function textfield_render( $args ) { 
 
 		extract( $args );
@@ -135,34 +151,46 @@ class CTCEX_CPTNames {
 
 	}
 
-	function settings_section_callback(  ) { 
+	/**
+	 * Display the settings decription
+	 *
+	 * @since  1.0
+	 */
+	function settings_section_callback() { 
 
 		echo __( 'Enter the display names to use for the different church theme content types. For instance <code>People</code> could be <code>Staff</code>, <code>Sermons</code> could be <code>Messages</code> or <code>Locations</code> could be <code>Places</code>. Make sure to resave the Permalinks to update the permalinks. If separate singular and plural names are desired, write them as <code>Plural/Singluar</code> (i.e., <code>Campuses/Campus</code>).', 'ctcex' );
 
 	}
 
-	function options_page(  ) { 
+	/**
+	 * Create the option page
+	 *
+	 * @since  1.0
+	 */
+	function options_page() { 
 
 		?>
 		<form action='options.php' method='post'>
 			
 			<h2>Church Theme Content Extender</h2>
 			
-			<?php
-			settings_fields( 'ctcexSettings' );
-			do_settings_sections( 'ctcexSettings' ); 
+			<?php settings_fields( 'ctcexSettings' ); ?>
+			<?php do_settings_sections( 'ctcexSettings' ); ?>	 
 			
-			 
-			echo ' <input name="reset" id="reset" type="submit" class="button reset-button button-secondary" value="'. __( 'Restore Defaults' ) .'" onclick="return confirm(\'Click OK to reset. Any theme settings will be lost!\');" />
-			<input name="submit" id="submit" type="submit" class="button button-primary" value="' . __( 'Save Changes' ) . '" />
-			';
-			?>
+			<input name="reset" id="reset" type="submit" class="button reset-button button-secondary" value="<?php _e( 'Restore Defaults', 'ctcex' ); ?>" onclick="return confirm(\'<?php _e( 'Click OK to reset. Any theme settings will be lost!', 'ctcex' );?>\');" />
+			<input name="submit" id="submit" type="submit" class="button button-primary" value="<?php _e( 'Save Changes', 'ctcex' ); ?>" />
 			
 		</form>
 		<?php
 
 	}
 	
+	/**
+	 * Validate inputs
+	 *
+	 * @since  1.0
+	 * @params mixed $input  Input to validate
+	 */
 	function validate_settings( $input ) {
 	
 		if ( ! isset( $_POST['reset'] ) ) {
@@ -173,7 +201,12 @@ class CTCEX_CPTNames {
 		return false;		
 }
 	
-	// Change slugs of CTC 
+	/**
+	 * Change the slugs of the CTC CPTs according to the new names
+	 *
+	 * @since  1.0
+	 * @params mixed $args  Arguments
+	 */
 	function ctc_slugs( $args ){
 		$old_slug = $args['rewrite']['slug'];
 		$old_name = $args['labels']['name'];

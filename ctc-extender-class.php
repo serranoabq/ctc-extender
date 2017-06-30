@@ -5,12 +5,11 @@
 // No direct access
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class CTC_Extender { 
-	public $version; 
+class CTC_Extender {
+	
+	public $version = '1.4.4'; 
 	
 	function __construct() {
-		// Version 
-		$this->version = '1.4.2';
 		
 		// Church Theme Content is REQUIRED
 		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
@@ -132,6 +131,8 @@ class CTC_Extender {
 		}
 		
 		$data = array(
+			'post_id'     => $post_id,
+			'date'        => get_the_date(),
 			'permalink'   => $permalink,
 			'img'         => $img,
 			'img_id'      => $img_id,
@@ -195,6 +196,7 @@ class CTC_Extender {
 		}
 		
 		$data = array(
+			'post_id'          => $post_id,
 			'name'             => get_the_title( $post_id ),
 			'permalink'        => $permalink,
 			'img'              => $img,
@@ -243,6 +245,7 @@ class CTC_Extender {
 		}
 		
 		$data = array(
+			'post_id'     => $post_id,
 			'name'        => get_the_title( $post_id ),
 			'permalink'   => $permalink,
 			'img'         => $img,
@@ -291,6 +294,7 @@ class CTC_Extender {
 		}
 		
 		$data = array(
+			'post_id'     => $post_id,
 			'name'      => get_the_title( $post_id ),
 			'permalink' => $permalink,
 			'img'       => $img,

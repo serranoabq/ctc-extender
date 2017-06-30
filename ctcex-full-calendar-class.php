@@ -8,7 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class CTCEX_FullCalendar {
 	
 	function __construct() {
-		$this->version = '1.2'; 
+		
+		$this->version = '1.2.5'; 
 		
 		// Church Theme Content is REQUIRED
 		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
@@ -17,36 +18,33 @@ class CTCEX_FullCalendar {
 	}
 	
 	/**
-	 * Parse shortcode and insert calendar
-	 * Usage: [ctc_fullcalendar] 
+	 * Calendar shortcode. This shorcode uses fullcalendar.js. 
+	 * See http://fullcalendar.io for more details.
+	 *
+	 * Usage: 
+	 * [ctc_fullcalendar] 
 	 *   Optional parameters:
-	 *     view = 'responsive','month','week','basicWeek','basicDay','agendaWeek', or 'agendaDay'
-	 *       Type of calendar to display. See http://arshaw.com/fullcalendar/ for more details. 
-	 *       If empty or 'responsive' the calendar is responsive and changes from 
-	 *       month => basicWeek => basicDay views
-	 *     breaks = '(med_break), (small_break)' 
-	 *       Widths to change from month view to basicWeek and from basicWeek to basicDay when $view is empty or 'responsive'
-	 *       Default is '770,600'
-	 *     category = (string)
-	 *       Category slug to show
-	 *     max_recur = (integer)
-	 *       Maximum number of recurrences to display. 0 only shows the first event. Default is 12
-	 *     max_events = (integer)
-	 *       Maximum events to display, not counting recurrences. Default is 100
-	 *     before=''
-	 *       Markup to insert before the calendar
-	 *     after = ''
-	 *       Markup to insert after the calendar
+	 *     view       = (string) Type of calendar. One of 'responsive (default)', 
+	 *                'month','week','basicWeek','basicDay','agendaWeek', or 'agendaDay'.
+	 *                'responsive' the calendar is responsive and changes from 
+	 *                month => basicWeek => basicDay views as the viewport shrinks
+	 *     breaks     = (string) List of widths at which the responsive view
+	 *                  changes from 'month' view to 'basicWeek' to 'basicDay'. 
+	 *                  Default is '770, 600'.
+	 *     category   = (string) Category slug to show
+	 *     max_recur  = (integer) Maximum number of recurrences to display. 0 only shows the first event. Default is 12
+	 *     max_events = (integer) Maximum events to display, not counting recurrences.
+	 *                  Default is 100
+	 *     before     = (string) Markup to insert before the calendar. Default ''.
+	 *     after      = (string) Markup to insert after the calendar. Default ''.
+	 *
 	 * @since 1.0
-	 * @param string $attr Shortcode options
-	 * @return string Full calendar display
+	 * @param  string   $attr         Shortcode options
+	 * @return string                 Full calendar display
 	 */
 	function shortcode( $attr ) {
-		$output = apply_filters( array( &$this, 'shortcode' ), '', $attr );
-	
-		if ( $output != '' ) return $output;
+		
 		$this->scripts_styles();
-		//add_action( 'wp_enqueue_scripts', array( &$this, 'scripts_styles' ) );
 		
 		extract( shortcode_atts( array(
 			'view'			=>  '',  
@@ -63,25 +61,41 @@ class CTCEX_FullCalendar {
 		$views =array( 'responsive', 'month', 'week', 'basicWeek', 'basicDay', 'agendaWeek', 'agendaDay' );
 		if( ! in_array( $view, $views ) ) $view = '';
 		
-		// insert scripts and styles
-		// wp_enqueue_script( 'moment' );
-		// wp_enqueue_script( 'fullcalendar' );
-		// wp_enqueue_script( 'ctc-fullcalendar' );
-		// wp_enqueue_style( 'fullcalendar-css' );
-		// wp_enqueue_style( 'ctc-fullcalendar' );
-		
 		// calendar div
 		$result = '<div id="ctc-fullcalendar"></div>';
 		
+		$events = $this->get_query( $category, $max_events, $max_recur );
+		
+		// The event data is loded as a json object 
+		$before .= '<script>';
+		$before .= 'var events = '. json_encode( $events ) . ';';
+		$before .= 'var fixedView = '. json_encode( $view ) . ';';
+		$before .= 'var breaks = '. json_encode( $breaks ) . ';';
+		$before .= '</script>';
+		
+		return $before . $result . $after;
+	}
+
+	/**
+		 * Perform event query
+		 *
+		 * @since  1.2.5
+		 * @param  string  $category    Event category to query (slug)
+		 * @param  integer $max_events  Maximum number of events to fetch
+		 * @param  integer $max_recur   Maximum number of recurrences to display
+		 * @return mixed                Array of event data for use in fullcalendar 
+		 */
+		function get_query( $category, $max_events, $max_recur ){
+		
 		// do query 
 		$query = array(
-			'post_type' => 'ctc_event', 
-			'order' => 'ASC',
-			'orderby' => 'meta_value',
-			'meta_key' => '_ctc_event_start_date_start_time',
-			'meta_type' => 'DATETIME',
-			'posts_per_page' => $max_events, 
-			'meta_query'     => array(
+			'post_type'        => 'ctc_event', 
+			'order'            => 'ASC',
+			'orderby'          => 'meta_value',
+			'meta_key'         => '_ctc_event_start_date_start_time',
+			'meta_type'        => 'DATETIME',
+			'posts_per_page'   => $max_events, 
+			'meta_query'       => array(
 				array(
 					'key'     => '_ctc_event_end_date',
 					'value'   => date_i18n( 'Y-m-d' ), // today localized
@@ -101,9 +115,7 @@ class CTCEX_FullCalendar {
 			);
 		}
 		
-		$posts = new WP_Query();
-		$posts -> query($query); 
-		
+		$posts = new WP_Query( $query );
 		if ($posts->have_posts()){
 			$events = array();
 			while ($posts->have_posts()) :
@@ -265,16 +277,9 @@ class CTCEX_FullCalendar {
 		}
 		wp_reset_query();
 		
-		// The event data is loded as a json object 
-		$before .= '<script>';
-		$before .= 'var events = '. json_encode($events) .';';
-		$before .= 'var fixedView = '. json_encode($view) . ';';
-		$before .= 'var breaks = '. json_encode($breaks) . ';';
-		$before .= '</script>';
-		
-		return $before . $result . $after;
+		return $events;
 	}
-
+	
 	/**
 	 * Register scripts and styles
 	 *

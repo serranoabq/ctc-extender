@@ -2,7 +2,7 @@
 /*
     Plugin Name: CTC Extender
     Description: Plugin to supplement the Church Theme Content plugin by adding additional features. Requires <strong>Church Theme Content</strong> plugin.
-    Version: 1.2.7
+    Version: 1.3
     Author: Justin R. Serrano
 */
 
@@ -17,40 +17,56 @@ if( ! class_exists( 'CTC_Extender' ) ) {
 }
 
 
-// public shortcuts to some class features 
+/**********************************************
+ *
+ * Public shortcuts to CTCEX features
+ *
+ *********************************************/
 
-// Get sermon data
-// @param string $post_id ID of post to retrieve data from
-// @param string $default_img URI to default image to return in data structure
-// @return An array of the relevant sermon data
+
+/**
+ * Get sermon data
+ *
+ * @param  string  $post_id     ID of post to retrieve data from
+ * @return mixed                Array of sermon data  
+ */
 function ctcex_get_sermon_data( $post_id, $default_img = '' ){
 	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_sermon_data( $post_id, $default_img ); 
 }
 
-// Get event data
-// @param string $post_id ID of post to retrieve data from
-// @return array An array of the event data
+/**
+ * Get event data
+ *
+ * @param  string  $post_id     ID of post to retrieve data from
+ * @return mixed                Array of event data  
+ */
 function ctcex_get_event_data( $post_id ){
 	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_event_data( $post_id ); 
 }
-
-// Get location data
-// @param string $post_id ID of post to retrieve data from
-// @return array An array of the event data
+/**
+ * Get location data
+ *
+ * @param  string  $post_id     ID of post to retrieve data from
+ * @return mixed                Array of location data  
+ */
 function ctcex_get_location_data( $post_id ){
 	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_location_data( $post_id ); 
 }
 
-// Get person data
-// @param string $post_id ID of post to retrieve data from
-// @return array An array of the event data
+/**
+ * Get person data
+ *
+ * @param  string  $post_id     ID of post to retrieve data from
+ * @return mixed                Array of person data  
+ */
 function ctcex_get_person_data( $post_id ){
 	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_person_data( $post_id ); 
 }
+
 // Get data
 // @param string $post_obj Post object to retrieve the recurrence note for
 // @return string Recurrence note
@@ -58,6 +74,7 @@ function ctcex_get_recurrence_note( $post_obj ){
 	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_recurrence_note( $post_obj ); 
 }
+
 // Forward the data for events
 function ctcex_update_recurring_events(){
 	global $CTCEX;
@@ -76,35 +93,42 @@ function ctcex_get_option( $option, $default = '' ){
 		return $default;
 }
 
+/**
+ * Determine if an option exists
+ *
+ * @param  string  $option      name of option to look up
+ * @return bool                 True if option exits
+ */
 function ctcex_has_option( $option ) {
 	$options = get_option( 'ctcex_settings' );
 	return array_key_exists( $option, $options );
 }
 
 function ctcex_tax_img_url( $term_id = NULL ) {
-	global $CTCEX;
-	// if( $term_id )
-		// $imgsrc = get_option( 'ctc_tax_img_' . $term_id );
-	// elseif( is_tax() ) {	
-		// $current_term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var('taxonomy' ) );
-		// $imgsrc = get_option( 'ctc_tax_img_' . $current_term->term_id );
-	// }
-
-	if( !$term_id && is_tax() ) {	
-		$current_term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var('taxonomy' ) );
+	
+	// Check if the taxonomy archive is being displayed
+	if( is_tax() ) {	
+		$tax = get_query_var('taxonomy' );
+		$term = get_query_var('term' );
+		$current_term = get_term_by( 'slug', $term, $tax );
 		$term_id = $current_term->term_id;
+	} else {
+		if( $term_id ){
+			$tax = get_term( $term_id )->taxonomy;
+		} else {
+			// w/o a term_id there's not much to do
+			return;
+		}
 	}
-	$imgsrc = ''; 
-	if( $term_id ){
-	$imgsrc = version_compare( $CTCEX->version, '1.4.1', '>' ) ? get_term_meta( $term_id, 'ctc_sermon_series_image', true ) : get_option( 'ctc_tax_img_' . $term_id );
-	} 
+	
+	if( $tax ){
+		$imgsrc = call_user_func( array( 'CTCEX_TaxImages', 'get_tax_image' ), $tax, $term_id );
+		$imgsrc = apply_filters( 'ctcex_tax_img_url_filter', $imgsrc, $term_id );
+		return $imgsrc;
+	}
 
-	// Allow filtering with add_filter( 'ctcex_tax_img_url_filter', 'some_func', 10, 2 ) 
-	// and function some_func( $imgsrc, $term_id )
-	// This would allow overriding this particular function but allow another 
-	// taxonomy image plugin to be used with CTC-related functions
-	$imgsrc = apply_filters( 'ctcex_tax_img_url_filter', $imgsrc, $term_id );
-	return $imgsrc;
+	return;
+	
 }
 
 add_filter( 'ctcex_translate', 'ctcex_customTranslate', 10, 2 );
