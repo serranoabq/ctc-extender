@@ -311,6 +311,45 @@ class CTC_Extender {
 		return $data;
 	}
 	
+	// Get group data
+	function get_group_data( $post_id ){
+		if( empty( $post_id ) ) return;
+		
+		$permalink = get_permalink( $post_id );
+		$img = get_the_post_thumbnail_url( $post_id, 'full');
+		$img_id = get_post_meta( $post_id, '_thumbnail_id' , true ); 
+		
+		// Group data
+		$leader = get_post_meta( $post_id, '_ctcex_group_leader' , true ); 
+		$leader_em = get_post_meta( $post_id, '_ctcex_group_leader_email' , true ); 
+		$leader_ph = get_post_meta( $post_id, '_ctcex_group_leader_phone' , true ); 
+		$leader_mobile = (bool)get_post_meta( $post_id, '_ctcex_group_leader_mobile' , true ); 
+		$day = get_post_meta( $post_id, '_ctcex_group_day' , true ); 
+		$time = get_post_meta( $post_id, '_ctcex_group_time' , true ); 
+		$address = get_post_meta( $post_id, '_ctcex_group_address' , true ); 
+		$demo = get_post_meta( $post_id, '_ctcex_group_demographic' , true ); 
+		$has_childcare = (bool)get_post_meta( $post_id, '_ctcex_group_childcare' , true ); 
+		
+		$data = array(
+			'post_id'       => $post_id,
+			'name'          => get_the_title( $post_id ),
+			'permalink'     => $permalink,
+			'img'           => $img,
+			'img_id'        => $img_id,
+			'leader'        => $leader,
+			'leader_em'     => $leader_em,
+			'leader_ph'     => $leader_ph,
+			'leader_mobile' => $leader_mobile,
+			'day'           => $day,
+			'time'          => $time,
+			'address'       => $address,
+			'demographic'   => $demo,
+			'has_childcare' => $has_childcare,
+		);
+		
+		return $data;
+	}
+	
 /********************************************		
 	CTC images shortcuts
 *********************************************/
