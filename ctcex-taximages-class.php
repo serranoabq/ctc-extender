@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 if ( ! class_exists( 'CTCEX_TaxImages' ) ) {
 	class CTCEX_TaxImages {
 		
-		public $version = '1.5';
+		public $version = '1.5.1';
 		
 		public $taxonomies = array( 'ctc_sermon_series' ) ;
 		
@@ -23,7 +23,7 @@ if ( ! class_exists( 'CTCEX_TaxImages' ) ) {
 			add_action('edit_term', array( $this, 'save_tax_img' ) );
 			add_action('create_term', array( $this, 'save_tax_img' ) );
 			add_action('delete_term', array( $this, 'delete_tax_img' ) );
-			add_action('quick_edit_custom_box', array( $this, 'img_tax_quick_edit' ), 10, 3); 
+			add_action('quick_edit_custom_box', array( $this, 'img_tax_quick_edit' ), 10, 2 ); 
 		}
 		
 		/**
@@ -108,7 +108,9 @@ if ( ! class_exists( 'CTCEX_TaxImages' ) ) {
 		 * @param mixed   $empty        Not used
 		 * @param string  $tax          Taxonomy 
 		 */
-		function img_tax_quick_edit( $column_name, $empty, $tax ){
+		function img_tax_quick_edit( $column_name, $empty ){
+			$tax = $_GET[ 'taxonomy' ];
+			if( ! in_array( $tax, $this->taxonomies ) ) return false;
 			if( 'ctc_tax_image' != $column_name ) return false;
 			?>
 			
@@ -350,7 +352,7 @@ if ( ! class_exists( 'CTCEX_TaxImages' ) ) {
 			$new_columns = array();
 			$new_columns[ 'cb' ] = $columns[ 'cb' ];
 			$new_columns[ 'name' ] = $columns[ 'name' ];
-			$new_columns[ 'ctc_tax_image' ] = __( 'Taxonomy Image', 'ctcex' );
+			$new_columns[ 'ctc_tax_image' ] = __( 'Image', 'ctcex' );
 			
 			unset( $columns[ 'cb' ] );			
 			unset( $columns[ 'name' ] );				

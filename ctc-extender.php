@@ -2,7 +2,7 @@
 /*
     Plugin Name: CTC Extender
     Description: Plugin to supplement the Church Theme Content plugin by adding additional features. Requires <strong>Church Theme Content</strong> plugin.
-    Version: 1.3
+    Version: 1.4.5
     Author: Justin R. Serrano
 */
 
@@ -65,6 +65,17 @@ function ctcex_get_location_data( $post_id ){
 function ctcex_get_person_data( $post_id ){
 	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_person_data( $post_id ); 
+}
+
+/**
+ * Get group data
+ *
+ * @param  string  $post_id     ID of post to retrieve data from
+ * @return mixed                Array of group data  
+ */
+function ctcex_get_group_data( $post_id ){
+	global $CTCEX;
+	if( $CTCEX ) return $CTCEX->get_group_data( $post_id ); 
 }
 
 // Get data

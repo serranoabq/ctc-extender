@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class CTC_Extender {
 	
-	public $version = '1.4.4'; 
+	public $version = '1.4.5'; 
 	
 	function __construct() {
 		
@@ -55,6 +55,7 @@ class CTC_Extender {
 		require_once( sprintf( "%s/ctcex-people-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-events-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-recurrence-class.php", dirname(__FILE__) ) );
+		require_once( sprintf( "%s/ctcex-groups.php", dirname(__FILE__) ) );
 		
 		// Add calendar 
 		new CTCEX_FullCalendar();	
@@ -73,6 +74,9 @@ class CTC_Extender {
 		
 		// Add Events shortcode
 		new CTCEX_Events();
+		
+		// Add GRoups
+		new CTCEX_Groups();
 	}
 	
 	

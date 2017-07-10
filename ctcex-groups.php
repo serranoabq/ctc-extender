@@ -11,7 +11,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 	
 	class CTCEX_Groups {
 		
-		public $version = '1.1';
+		public $version = '1.1.1';
 		
 		function __construct(){
 			
@@ -21,7 +21,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 			add_action( 'init', array( $this, 'register_group_post_type' ) ); 
 			add_action( 'admin_init', array( $this, 'add_meta_box_leader' ) );
 			add_action( 'admin_init', array( $this, 'add_meta_box_group' ) );
-			add_filter( 'manage_ctcex_group_posts_columns' , array( $this, 'add_columns' ) );
+			add_filter( 'manage_ctcex_groups_posts_columns' , array( $this, 'add_columns' ) );
 			add_action( 'manage_posts_custom_column' , array( $this, 'add_columns_content' ) ); 
 
 		}
@@ -32,8 +32,8 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 			// Arguments
 			$args = array(
 				'labels'      => array(
-					'name'               => _x( 'Groups', 'post type general name', 'ctcex' ),
-					'singular_name'      => _x( 'Group', 'post type singular name', 'ctcex' ),
+					'name'               => _x( 'Small Groups', 'post type general name', 'ctcex' ),
+					'singular_name'      => _x( 'Small Group', 'post type singular name', 'ctcex' ),
 					'add_new'            => __( 'Add New', 'ctcex' ),
 					'add_new_item'       => __( 'Add Group', 'ctcex' ),
 					'edit_item'          => __( 'Edit Group', 'ctcex' ),
@@ -47,11 +47,12 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 				'public'      => true,
 				'has_archive' => true,
 				'rewrite'     => array(
-					'slug'        => 'group',
-					'with_front'  => false,
-					'feeds'       => ctc_feature_supported( 'groups' )
+					'slug'        => 'small-group',
+					'with_front'  => true,
+					'feeds'       => false, //ctc_feature_supported( 'groups' )
 				),
-				'supports'    => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ), 
+				'supports'    => array( 'title', 'editor', 'thumbnail', 'revisions' ), 
+				'menu_icon'		=> 'dashicons-groups'	
 			);
 			$args = apply_filters( 'ctc_post_type_group_args', $args ); // allow filtering
 				
@@ -72,15 +73,15 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 				// Meta Box
 				'id'         => 'ctcex_group_leader', // unique ID
 				'title'      => __( 'Group Leader Info', 'ctcex' ),
-				'post_type'	 => 'ctcex_group',
-				'context'	   => 'normal', 
-				'priority'	 => 'high', 
+				'post_type'	 => 'ctcex_groups',
+				'context'	   => 'side', 
+				'priority'	 => 'core', 
 				'fields'     => array(
 					
 					// Group Host/Leader				
 					'_ctcex_group_leader'  => array(
 						'name'            => __( 'Name', 'ctcex' ),
-						'after_name'		  => __( '(Required)', 'ctcex' ), 
+						'after_name'		  => '', 
 						'desc'            => '',
 						'type'            => 'text',
 						'default'         => '', 
@@ -108,7 +109,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 						'name'            => __( 'Phone', 'ctcex' ),
 						'after_name'		  => '', 
 						'desc'            => '',
-						'type'            => 'tel',
+						'type'            => 'text',
 						'default'         => '', 
 						'no_empty'        => true, 
 						'allow_html'      => false, 
@@ -147,9 +148,9 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 				// Meta Box
 				'id'         => 'ctcex_group_data', // unique ID
 				'title'      => __( 'Group Data', 'ctcex' ),
-				'post_type'	 => 'ctcex_group',
-				'context'	   => 'normal', 
-				'priority'	 => 'high', 
+				'post_type'	 => 'ctcex_groups',
+				'context'	   => 'side', 
+				'priority'	 => 'core', 
 				'fields'     => array(
 					
 					// Group Day				
@@ -160,13 +161,13 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 						'type'            => 'select',
 						'checkbox_label'  => '', //show text after checkbox
 						'options'         => array( 
-							'sunday'     => _x( 'Sun', 'Sunday abbreviation', 'ctcex'),
-							'monday'     => _x( 'Mon', 'Monday abbreviation', 'ctcex'),
-							'tuesday'    => _x( 'Tue', 'Tuesday abbreviation', 'ctcex'),
-							'wednesday'  => _x( 'Wed', 'Wednesday abbreviation', 'ctcex'),
-							'thursday'   => _x( 'Thu', 'Thursday abbreviation', 'ctcex'),
-							'friday'     => _x( 'Fri', 'Friday abbreviation', 'ctcex'),
-							'saturday'   => _x( 'Sat', 'Saturday abbreviation', 'ctcex'),
+							'sunday'     => date_i18n( 'l', strtotime( 'next Sunday' ) ),
+							'monday'     => date_i18n( 'l', strtotime( 'next Monday' ) ),
+							'tuesday'    => date_i18n( 'l', strtotime( 'next Tuesday' ) ),
+							'wednesday'  => date_i18n( 'l', strtotime( 'next Wednesday' ) ),
+							'thursday'   => date_i18n( 'l', strtotime( 'next Thursday' ) ),
+							'friday'     => date_i18n( 'l', strtotime( 'next Friday' ) ),
+							'saturday'   => date_i18n( 'l', strtotime( 'next Saturday' ) ),
 							), 
 						'default'         => 0, 
 						'no_empty'        => true, 
@@ -178,7 +179,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 					// Group Time				
 					'_ctcex_group_time' => array(
 						'name'            => __( 'Time', 'ctcex' ),
-						'after_name'      => __( 'Required', 'ctcex' ), 
+						'after_name'      => __( '(Required)', 'ctcex' ), 
 						'desc'            => __( 'Provide a time such as "8:00 am &ndash; 2:00 pm"', 'ctcex' ),
 						'type'            => 'text', 
 						'default'         => '', 
@@ -206,8 +207,8 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 						'type'            => 'select',
 						'options'         => array( 
 							'all'         => _x( 'Anyone', 'group demographic', 'ctcex' ),
-							'women'       => _x( 'Anyone', 'group demographic', 'ctcex' ),
-							'men'         => _x( 'Anyone', 'group demographic', 'ctcex' ),
+							'women'       => _x( 'Women', 'group demographic', 'ctcex' ),
+							'men'         => _x( 'Men', 'group demographic', 'ctcex' ),
 							'teens'       => _x( 'Teens All (12-18)', 'group demographic', 'ctcex' ),
 							'teen_g'      => _x( 'Teen Girls (12-18)', 'group demographic', 'ctcex' ),
 							'teen_b'      => _x( 'Teen Boys (12-18)', 'group demographic', 'ctcex' ),
@@ -249,7 +250,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 
 			$insert_array = array();
 			$insert_array['ctcex_group_day_time'] = _x( 'When', 'group admin column', 'ctcex' );
-			$insert_array['ctcex_group_leader'] = _x( 'Leader/Host', 'group admin column', 'ctcex' );
+			$insert_array['ctcex_group_leader'] = _x( 'Leader', 'group admin column', 'ctcex' );
 			$insert_array['ctcex_group_address'] = _x( 'Address', 'group admin column', 'ctcex' );
 			$insert_array['ctcex_group_demographic'] = _x( 'Demographic', 'group admin column', 'ctcex' );
 			$insert_array['ctcex_group_childcare'] = _x( 'Has Childcare?', 'group admin column', 'ctcex' );
@@ -306,9 +307,9 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 				
 				// Childcare
 				case 'ctcex_group_childcare' :
-					$cb = get_post_meta( $post->ID , '_ctcex_group_address' , true );
+					$cb = (bool) get_post_meta( $post->ID , '_ctcex_group_childcare' , true );
 					
-					echo '<input type="checkbox" disabled ' . $cb ? 'checked' : '' . '/>';
+					echo $cb ? '<span class="dashicons dashicons-yes"></span>' : '';
 				
 					break;
 					

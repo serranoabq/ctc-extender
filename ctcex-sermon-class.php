@@ -130,92 +130,92 @@ if( ! class_exists( 'CTCEX_Sermon' ) ) {
 			
 			$output = ''; 
 			
-			foreach( $sermon_data as $data ){
-					
-				// Get date
-				$date_src = sprintf( '<div class="%s"><b> %s:</b> %s</div>', $classes[ 'date' ], __( 'Date', 'ctcex' ), get_the_date() );
-				
-				// Get speaker
-				$speaker_src = $data[ 'speakers' ] ? sprintf( '<div class="%s"><b>%s:</b> %s</div>', $classes[ 'speaker' ], __( 'Speaker', 'ctcex' ), $data[ 'speakers' ] ) : '';
-				
-				// Get series
-				$series_src = $data[ 'series' ] ?	sprintf( '<div class="%s"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'series' ],  __( 'Series', 'ctcex' ), $data[ 'series_link' ], $data[ 'series' ] ) : '';
-				
-				// Get topics
-				// Topic name
-				$topic_name = explode( '/', ctcex_get_option( 'ctc-sermon-topic' , __( 'Topic', 'ctcex') ) );
-				$topic_name = ucfirst( array_pop(  $topic_name ) );
-				$topic_src = $data[ 'topic' ] ? sprintf( '<div class="%s"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'topic' ], $topic_name, $data[ 'topic_link' ], $data[ 'topic' ] ) : '';
-
-				// Get audio link
-				$audio_link_src = $data[ 'audio' ] ? sprintf( '<div class="%s"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'audio-link' ], __( 'Audio', 'ctcex' ), $data[ 'audio' ], __( 'Download audio', 'ctcex' ) ) : '';
-				
-				// Get audio display
-				$audio_src = $data[ 'audio' ] ? sprintf( '<div class="%s">%s</div>', $classes[ 'audio' ], wp_audio_shortcode( array( 'src' => $data[ 'audio' ] ) ) ) : '';
-				
-				// Get video display
-				$video_iframe_class = strripos( $data[ 'video' ], 'iframe' ) ? 'iframe-container' : '';
-				$video_src = $data[ 'video' ] ? sprintf( '<div class="%s %s">%s</div>', $classes[ 'video' ], $video_iframe_class, $video_iframe_class ? $data[ 'video' ] : wp_video_shortcode( array( 'src' => $data[ 'video' ] ) ) ) : '';
-		
-				// Use the image as a placeholder for the video
-				$img_overlay_class = $data[ 'video' ] && $data[ 'img' ] ? 'ctcex-overlay' : '';
-				$img_overlay_js = $img_overlay_class ? sprintf(
-					'<div class="ctcex-overlay">
-						<i class="' . ( $glyph === 'gi' ? 'genericon genericon-play' : 'fa fa-play' ) . '"></i>
-					</div><script>
-						jQuery(document).ready( function($) {
-							$( ".%s" ).css( "position", "relative" );
-							$( ".ctcex-overlay" ).css( "cursor", "pointer" );
-							var vid_src = \'%s\';
-							vid_src = vid_src.replace( "autoPlay=false", "autoPlay=true" );
-							$( ".ctcex-overlay" ).click( function(){
-								$( this ).hide();
-								$( ".ctcex-sermon-img" ).fadeOut( 200, function() {
-									$( this ).replaceWith( vid_src );
-									$( ".%s").addClass( "video_loaded" );
-								});
-							} );
-						})
-					</script>', 
-					$classes[ 'media' ],
-					$video_src, 
-					$classes[ 'media' ]
-					) : '' ;
-					
-				// Get image
-				$img_src = $data[ 'img' ] ? sprintf( '%s<img class="%s" src="%s" alt="%s" width="960"/>', $img_overlay_js, $classes[ 'img' ], $data[ 'img' ], $data[ 'name' ] ) : '';
-				$video_src = $img_overlay_class ? $img_src : $video_src;
-				
-				$img_video_output = $video_src ? $video_src : $img_src . $audio_src;
-				
-				// Prepare output
-				$output = sprintf(
-					'<div class="%s">
-						<div class="%s">%s</div>
-						<div class="%s">
-							<h3><a href="%s">%s</a></h3>
-							%s
-							%s
-							%s
-							%s
-							%s
-						</div>
-					', 
-					$classes[ 'container' ],
-					$classes[ 'media' ],
-					$img_video_output,
-					$classes[ 'details' ],
-					$data[ 'permalink' ],
-					$data[ 'name' ],
-					$date_src,
-					$speaker_src,
-					$series_src,
-					$topic_src,
-					$audio_link_src
-				);
-				
-			}
+																		
+		 
+			// Get date
+			$date_src = sprintf( '<div class="%s"><b> %s:</b> %s</div>', $classes[ 'date' ], __( 'Date', 'ctcex' ), get_the_date() );
 			
+			// Get speaker
+			$speaker_src = $data[ 'speakers' ] ? sprintf( '<div class="%s"><b>%s:</b> %s</div>', $classes[ 'speaker' ], __( 'Speaker', 'ctcex' ), $data[ 'speakers' ] ) : '';
+			
+			// Get series
+			$series_src = $data[ 'series' ] ?	sprintf( '<div class="%s"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'series' ],  __( 'Series', 'ctcex' ), $data[ 'series_link' ], $data[ 'series' ] ) : '';
+			
+			// Get topics
+			// Topic name
+			$topic_name = explode( '/', ctcex_get_option( 'ctc-sermon-topic' , __( 'Topic', 'ctcex') ) );
+			$topic_name = ucfirst( array_pop(  $topic_name ) );
+			$topic_src = $data[ 'topic' ] ? sprintf( '<div class="%s"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'topic' ], $topic_name, $data[ 'topic_link' ], $data[ 'topic' ] ) : '';
+
+			// Get audio link
+			$audio_link_src = $data[ 'audio' ] ? sprintf( '<div class="%s"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'audio-link' ], __( 'Audio', 'ctcex' ), $data[ 'audio' ], __( 'Download audio', 'ctcex' ) ) : '';
+			
+			// Get audio display
+			$audio_src = $data[ 'audio' ] ? sprintf( '<div class="%s">%s</div>', $classes[ 'audio' ], wp_audio_shortcode( array( 'src' => $data[ 'audio' ] ) ) ) : '';
+			
+			// Get video display
+			$video_iframe_class = strripos( $data[ 'video' ], 'iframe' ) ? 'iframe-container' : '';
+			$video_src = $data[ 'video' ] ? sprintf( '<div class="%s %s">%s</div>', $classes[ 'video' ], $video_iframe_class, $video_iframe_class ? $data[ 'video' ] : wp_video_shortcode( array( 'src' => $data[ 'video' ] ) ) ) : '';
+	
+			// Use the image as a placeholder for the video
+			$img_overlay_class = $data[ 'video' ] && $data[ 'img' ] ? 'ctcex-overlay' : '';
+			$img_overlay_js = $img_overlay_class ? sprintf(
+				'<div class="ctcex-overlay">
+					<i class="' . ( $glyph === 'gi' ? 'genericon genericon-play' : 'fa fa-play' ) . '"></i>
+				</div><script>
+					jQuery(document).ready( function($) {
+						$( ".%s" ).css( "position", "relative" );
+						$( ".ctcex-overlay" ).css( "cursor", "pointer" );
+						var vid_src = \'%s\';
+						vid_src = vid_src.replace( "autoPlay=false", "autoPlay=true" );
+						$( ".ctcex-overlay" ).click( function(){
+							$( this ).hide();
+							$( ".ctcex-sermon-img" ).fadeOut( 200, function() {
+								$( this ).replaceWith( vid_src );
+								$( ".%s").addClass( "video_loaded" );
+							});
+						} );
+					})
+				</script>', 
+				$classes[ 'media' ],
+				$video_src, 
+				$classes[ 'media' ]
+				) : '' ;
+				
+			// Get image
+			$img_src = $data[ 'img' ] ? sprintf( '%s<img class="%s" src="%s" alt="%s" width="960"/>', $img_overlay_js, $classes[ 'img' ], $data[ 'img' ], $data[ 'name' ] ) : '';
+			$video_src = $img_overlay_class ? $img_src : $video_src;
+			
+			$img_video_output = $video_src ? $video_src : $img_src . $audio_src;
+			
+			// Prepare output
+			$output = sprintf(
+				'<div class="%s">
+					<div class="%s">%s</div>
+					<div class="%s">
+						<h3><a href="%s">%s</a></h3>
+						%s
+						%s
+						%s
+						%s
+						%s
+					</div>
+				', 
+				$classes[ 'container' ],
+				$classes[ 'media' ],
+				$img_video_output,
+				$classes[ 'details' ],
+				$data[ 'permalink' ],
+				$data[ 'name' ],
+				$date_src,
+				$speaker_src,
+				$series_src,
+				$topic_src,
+				$audio_link_src
+			);
+			
+		
+	 
 			return $output;
 			
 		}
