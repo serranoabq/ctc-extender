@@ -331,24 +331,27 @@ class CTC_Extender {
 		$day = get_post_meta( $post_id, '_ctcex_group_day' , true ); 
 		$time = get_post_meta( $post_id, '_ctcex_group_time' , true ); 
 		$address = get_post_meta( $post_id, '_ctcex_group_address' , true ); 
-		$demo = get_post_meta( $post_id, '_ctcex_group_demographic' , true ); 
 		$has_childcare = (bool)get_post_meta( $post_id, '_ctcex_group_childcare' , true ); 
 		
+		$demo = join( ', ', wp_list_pluck( wp_get_post_terms( $post_id, 'ctcex_group_demographic' ), 'name' ) ); 
+		$demo_sl = join( ', ', wp_list_pluck( wp_get_post_terms( $post_id, 'ctcex_group_demographic' ), 'slug' ) ); 
+		
 		$data = array(
-			'post_id'       => $post_id,
-			'name'          => get_the_title( $post_id ),
-			'permalink'     => $permalink,
-			'img'           => $img,
-			'img_id'        => $img_id,
-			'leader'        => $leader,
-			'leader_em'     => $leader_em,
-			'leader_ph'     => $leader_ph,
-			'leader_mobile' => $leader_mobile,
-			'day'           => $day,
-			'time'          => $time,
-			'address'       => $address,
-			'demographic'   => $demo,
-			'has_childcare' => $has_childcare,
+			'post_id'        => $post_id,
+			'name'           => get_the_title( $post_id ),
+			'permalink'      => $permalink,
+			'img'            => $img,
+			'img_id'         => $img_id,
+			'leader'         => $leader,
+			'leader_em'      => $leader_em,
+			'leader_ph'      => $leader_ph,
+			'leader_mobile'  => $leader_mobile,
+			'day'            => $day,
+			'time'           => $time,
+			'address'        => $address,
+			'demographic'    => $demo,
+			'demographic_sl' => $demo_sl,
+			'has_childcare'  => $has_childcare,
 		);
 		
 		return $data;

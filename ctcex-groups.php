@@ -11,12 +11,32 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 	
 	class CTCEX_Groups {
 		
-		public $version = '1.1.1';
+		public $version = '1.1.2';
+		
+		public $demographics = array( 
+			'all'         => _x( 'Anyone', 'group demographic', 'ctcex' ),
+			'women'       => _x( 'Women', 'group demographic', 'ctcex' ),
+			'men'         => _x( 'Men', 'group demographic', 'ctcex' ),
+			'teens'       => _x( 'Teens', 'group demographic', 'ctcex' ),
+			'teen_g'      => _x( 'Teen Girls (12-18)', 'group demographic', 'ctcex' ),
+			'teen_b'      => _x( 'Teen Boys (12-18)', 'group demographic', 'ctcex' ),
+			'middle_sch'  => _x( 'Middle Schoolers', 'group demographic', 'ctcex' ),
+			'high_sch'    => _x( 'High Schoolers', 'group demographic', 'ctcex' ),
+			'kids'        => _x( 'Children', 'group demographic', 'ctcex' ),
+			'marriage'    => _x( 'Marriages', 'group demographic', 'ctcex' ),
+			'young_adult' => _x( 'Young Adults', 'group demographic', 'ctcex' ),
+			'single'      => _x( 'Single', 'group demographic', 'ctcex' ),
+			'seniors50'   => _x( 'Seniors over 50', 'group demographic', 'ctcex' ),
+			'seniors65'   => _x( 'Seniors over 65', 'group demographic', 'ctcex' ),
+		)
 		
 		function __construct(){
 			
 			// Church Theme Content is REQUIRED
 			if ( ! class_exists( 'Church_Theme_Content' ) ) return;
+			
+			// Allow filtering of the demographics
+			$this->demographics = apply_filters( 'ctcex_group_demographics', $this->demographics );
 			
 			add_action( 'init', array( $this, 'register_group_post_type' ) ); 
 			add_action( 'admin_init', array( $this, 'add_meta_box_leader' ) );
@@ -191,7 +211,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 
 					// Group address
 					'_ctcex_group_address' => array(
-						'name'				    => _x( 'Address', 'event meta box', 'ctcex' ),
+						'name'				    => __( 'Address', 'ctcex' ),
 						'after_name'		  => '', 
 						'desc'				    => '',
 						'type'				    => 'textarea', 
@@ -200,31 +220,18 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 						'class'				    => 'ctmb-medium', 
 					),
 					
-					// Group Day				
-					'_ctcex_group_demographic'  => array(
-						'name'            => __( 'Target Demographic', 'ctcex' ),
-						'desc'            => '',
-						'type'            => 'select',
-						'options'         => array( 
-							'all'         => _x( 'Anyone', 'group demographic', 'ctcex' ),
-							'women'       => _x( 'Women', 'group demographic', 'ctcex' ),
-							'men'         => _x( 'Men', 'group demographic', 'ctcex' ),
-							'teens'       => _x( 'Teens All (12-18)', 'group demographic', 'ctcex' ),
-							'teen_g'      => _x( 'Teen Girls (12-18)', 'group demographic', 'ctcex' ),
-							'teen_b'      => _x( 'Teen Boys (12-18)', 'group demographic', 'ctcex' ),
-							'middle_sch'  => _x( 'Middle Schoolers', 'group demographic', 'ctcex' ),
-							'high_sch'    => _x( 'High Schoolers', 'group demographic', 'ctcex' ),
-							'kids'        => _x( 'Children (2-12)', 'group demographic', 'ctcex' ),
-							'marriage'    => _x( 'Marriages', 'group demographic', 'ctcex' ),
-							'young_adult' => _x( 'Young Adults', 'group demographic', 'ctcex' ),
-							'seniors'     => _x( 'Seniors over 50', 'group demographic', 'ctcex' ),
-							), 
-						'default'         => 'all', 
-						'no_empty'        => true, 
-						'allow_html'      => false, 
+					// Group zip
+					'_ctcex_group_zip' => array(
+						'name'				    => __( 'Zip code', 'ctcex' ),
+						'after_name'		  => '', 
+						'desc'				    => '',
+						'type'				    => 'text', 
+						'no_empty'			  => true, 
+						'allow_html'		  => false, 
+						'class'				    => 'ctmb-medium', 
 					),
 					
-					// Childcare availability
+					// Childcare Availability
 					'_ctcex_group_childcare' => array(
 						'name'            => __( 'Has childcare', 'ctcex' ),
 						'desc'            => '',
@@ -245,6 +252,44 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 			
 		}
 
+		function add_demographic_taxonomy(){
+			
+			// Arguments
+			$args = array(
+				'labels' => array(
+					'name'                  => __( 'Demographics', 'ctcex' ),
+					'singular_name'         => __( 'Demographic', 'ctcex' ),
+					'search_items'          => __( 'Search Demographic', 'ctcex' ),
+					'popular_items'         => __( 'Popular Demographics', 'ctcex' ),
+					'all_items'             => __( 'All Demographics', 'sermons', 'ctcex' ),
+					'parent_item'           => null,
+					'parent_item_colon'     => null,
+					'edit_item'             => __( 'Edit Demographic', 'ctcex' ),
+					'update_item'           => __( 'Update Demographic' 'ctcex' ),
+					'add_new_item'          => __( 'Add Demographic', 'ctcex' ),
+					'new_item_name'         => __( 'New Demographic', 'ctcex' ),
+					'add_or_remove_items'   => __( 'Add or remove demographic', 'ctcex' ),
+					'choose_from_most_used' => __( 'Choose from the most used demographic', 'ctcex' ),
+					'menu_name'             => __( 'Demographics', 'ctcex' )
+				),
+				'hierarchical'	=> true, // category-style instead of tag-style
+				'public' 		=> true,
+				'rewrite' 		=> array(
+					'slug' 			=> 'group-demographic',
+					'with_front' 	=> false,
+					'hierarchical' 	=> false
+				)
+			);
+			$args = apply_filters( 'ctc_group_demographic_args', $args ); // allow filtering
+
+			// Registration
+			register_taxonomy(
+				'ctcex_group_demographic',
+				'ctcex_group',
+				$args
+			);
+		}
+		
 		// Add columns
 		function add_columns( $columns ) {
 
@@ -252,7 +297,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 			$insert_array['ctcex_group_day_time'] = _x( 'When', 'group admin column', 'ctcex' );
 			$insert_array['ctcex_group_leader'] = _x( 'Leader', 'group admin column', 'ctcex' );
 			$insert_array['ctcex_group_address'] = _x( 'Address', 'group admin column', 'ctcex' );
-			$insert_array['ctcex_group_demographic'] = _x( 'Demographic', 'group admin column', 'ctcex' );
+			$insert_array['ctcex_group_demographic'] = _x( 'Demographics', 'group admin column', 'ctcex' );
 			$insert_array['ctcex_group_childcare'] = _x( 'Has Childcare?', 'group admin column', 'ctcex' );
 			$columns = ctc_array_merge_after_key( $columns, $insert_array, 'title' );
 
@@ -301,7 +346,8 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 				// Demographic
 				case 'ctcex_group_demographic' :
 				
-					echo get_post_meta( $post->ID , '_ctcex_group_demographic' , true );
+					$terms = join( ', ', wp_list_pluck( wp_get_post_terms( $post->ID, 'ctcex_group_demographic' ), 'name' ) );
+					echo $terms;
 				
 					break;
 				
@@ -321,16 +367,21 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 			
 			$group_data = $this->get_query();
 			
+			$terms = get_terms( array( 
+				'taxonomy' => 'ctcex_group_demographic',
+				'hide_empty' => true,
+			) );
+			
 			// Filter the output of the whole shortcode
 			// Note: This filters the whole shortcode. Any styles and scripts needed by the 
 			//       new ouput will have to be included in the filtering function
-			// Use: add_filter( 'ctcex_group_shortcode', '<<<callback>>>', 10, 2 ); 
+			// Use: add_filter( 'ctcex_group_shortcode', '<<<callback>>>', 10, 3 ); 
 			// Args: first argument is the output to filter; empty
 			//       <people_data> is the data extracted from people query; array of arrays
-			$output = apply_filters( 'ctcex_group_shortcode', '', $group_data );
+			$output = apply_filters( 'ctcex_group_shortcode', '', $group_data, $terms );
 			
 			if( empty( $output) )
-				$output = $this->get_output( $group_data );
+				$output = $this->get_group_output( $group_data, $terms );
 			
 			return $output; 
 			
@@ -363,20 +414,103 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 			
 		}
 		
-		function get_group_output( $group_data ){
+		function get_group_output( $group_data, $terms ){
 			
 			// generate output
-			$this->scripts();
+			// $this->scripts();
 			
-			$output = '';
+			$output =  $this->control_markup( $terms );
+			$output .= $this->container_markup( $terms );
+			
+			return $output;
+		}
+		
+		function control_markup( $terms ){
+			
+			$output = apply_filters( 'ctc_group_demographic_control_output', '', $terms ); // allow filtering
+			if( ! empty( $output ) ) return $output;
+			
+			$output = '<div class="controls">';
+			$output .= '	<select id="ctcex_demographics">';
+			$output .= '		<option value="all">' . __( 'All', 'ctcex' ) . '</option>';
+			foreach( $terms as $term ){
+				$output .= '		<option value=".' . $term->slug . '">' . $term->name . '</option>';
+			}
+			$output .= '</select>';
+			$output .= '<label for="childcare">';
+			$output .= '	<input id="childcare" type="checkbox">';
+			$output .= __( 'Childcare provided?', 'ctcex' );
+			$output .= '</label>';
+			
+			$output .= '
+			<script>
+				jQuery(document).ready( function($) {
+					$( "#ctcex_demographics" ).on( "change", function(){
+						// check childcare checkbox
+						var childcare = $( "#childcare" ).prop( "checked" ) ? ".haschildcare" : "";
+						// target for filter
+						var target = "all" == this.value ? ".ctcex_group" : this.value;
+						
+						if( childcare )							
+							$( target ).not( childcare ).fadeOut();
+						$( target + childcare ).show();
+						
+					});
+					
+					$( "#childcare" ).on( "change", function(){
+						// check demographic
+						var demo = $( "#ctcex_demographics" ).val();
+						var target = "all" == demo ? ".ctcex_group" : "";
+						var childcare = this.checked ? ".haschildcare" : "";
+						
+						if( childcare ){							
+							$( target ).not( childcare ).fadeOut();
+						$( target + childcare ).show();
+						
+					});
+				});
+			</script>';
+			
+			return $output; 
+			
+		}
+		
+		function container_markup( $group_data ){
+
+			$output = apply_filters( 'ctc_group_demographic_container_output', '', $terms ); // allow filtering
+			if( ! empty( $output ) ) return $output;
+			
+			$output =  '<div class="container">';
+			
 			foreach( $group_data as $group ){
+				$classes = array();
+				$classes[] = $group->day;
+				$classes[] = $group->zip;
+				if( $group->has_childcare ) $classes[] = 'haschildcare';
+				$demos = explode( ", ", $group->demographic_sl );
+				$classes = array_merge( $classes, $demos );
 				
-				$item_output = '';
+				$output .= '<div class="ctcex_group ' . join( ' ', $classes ) . '">';
+				$output .= '	<h5 class="ctcex_group_name">' . $group->name . '</h5>';
+				$output .= '	<div class="ctcex_group_data">';
+				$output .= '	<div class="ctcex_group_day_time">' . $group->day . ' @ ' . $group->time . '</div>';
 				
-				$output .= $output;
+				$leader_em = $group->leader_em;
+				$leader = $leader_em ? '<a href="mailto:' . $leader_em . '">' : '';
+				$leader .= $group->leader; 
+				$leader .= $leader_em ? '</a> ' : ' ';
+				$leader .= $group->leader_ph;
+				$leader .= $group->leader_mobile && $group->leader_ph ? ' (mobile)' : '';
+				
+				$output .= '	<div class="ctcex_group_leader">' . $leader . '</div>';
+				$output .= '	<div class="ctcex_group_address">' . nl2br( $group->address ) . '</div>';
+				
+				$output .= $group->has_childcare ? '<div class="ctcex_group_haschildcare">' . __( 'Childcare provided', 'ctcex' ) . '</div>';
+				
+				$output .= '</div>';
 			}
 			
-			$output .= '';
+			$output .= '</div>';
 			
 			return $output;
 		}
@@ -385,6 +519,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 			
 			// enqueue scripts
 			//wp_enqueue_script...
+			//wp_enqueue_style...
 		}
 		
 	}
