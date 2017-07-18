@@ -331,6 +331,7 @@ class CTC_Extender {
 		$day = get_post_meta( $post_id, '_ctcex_group_day' , true ); 
 		$time = get_post_meta( $post_id, '_ctcex_group_time' , true ); 
 		$address = get_post_meta( $post_id, '_ctcex_group_address' , true ); 
+		$zip = get_post_meta( $post_id, '_ctcex_group_zip' , true ); 
 		$has_childcare = (bool)get_post_meta( $post_id, '_ctcex_group_childcare' , true ); 
 		
 		$demo = join( ', ', wp_list_pluck( wp_get_post_terms( $post_id, 'ctcex_group_demographic' ), 'name' ) ); 
@@ -349,6 +350,7 @@ class CTC_Extender {
 			'day'            => $day,
 			'time'           => $time,
 			'address'        => $address,
+			'zip'            => $zip,
 			'demographic'    => $demo,
 			'demographic_sl' => $demo_sl,
 			'has_childcare'  => $has_childcare,
