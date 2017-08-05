@@ -109,6 +109,7 @@ if ( ! class_exists( 'CTCEX_TaxImages' ) ) {
 		 * @param string  $tax          Taxonomy 
 		 */
 		function img_tax_quick_edit( $column_name, $empty ){
+			if( ! isset( $_GET[ 'taxonomy' ] ) ) return false;
 			$tax = $_GET[ 'taxonomy' ];
 			if( ! in_array( $tax, $this->taxonomies ) ) return false;
 			if( 'ctc_tax_image' != $column_name ) return false;
