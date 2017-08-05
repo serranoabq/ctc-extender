@@ -383,10 +383,6 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 			
 			$posts = new WP_Query( $query );
 			
-			// wp_reset_postdata();
-			// echo json_encode( $posts );
-			// return;
-			
 			if( $posts->have_posts() ):
 				while ( $posts->have_posts() ) : $posts->the_post();
 					
@@ -403,8 +399,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 		
 		function get_group_output( $group_data, $terms ){
 			
-			// generate output
-			// $this->scripts();
+			$this->scripts();
 			
 			$output =  $this->control_markup( $terms );
 			$output .= $this->container_markup( $group_data );
@@ -437,11 +432,12 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 			foreach( $terms as $term ){
 				$output .= '		<option value=".' . $term->slug . '">' . $term->name . '</option>';
 			}
-			$output .= '</select>';
-			$output .= '<label for="childcare" id="childcare_label">';
-			$output .= '	<input id="childcare" type="checkbox"> ';
-			$output .= __( 'Childcare provided?', 'ctcex' );
-			$output .= '</label>';
+			$output .= '	</select>';
+			$output .= '	<label for="childcare" id="childcare_label">';
+			$output .= '		<input id="childcare" type="checkbox" data-toggle=".haschildcare"> ';
+			$output .=			__( 'Childcare provided?', 'ctcex' );
+			$output .= '	</label>';
+			$output .= '</div>';
 			
 			$output .= '
 			<script>
@@ -451,14 +447,18 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 					});
 					
 					function do_filter(){
-						var demo = $( "#ctcex_demographics" ).val();
 						var childcare = $( "#childcare" ).prop( "checked" ) ? ".haschildcare" : "";
-						var value = ( "all" == demo ? "": demo );
+						var demo = $( "#ctcex_demographics" ).val();
+						var value = childcare ? ( "all" == demo ? childcare : demo + childcare ) : demo;
+						mixer.filter(value);
+						return;
 						if( value + childcare )
 							$( ".ctcex_group:not(" + value + childcare + ")" ).fadeOut();
 						$( ".ctcex_group" + value + childcare ).fadeIn();
 						
 					}
+					
+					var mixer = mixitup( ".ctcex_groups_container" );
 				});
 			</script>';
 			
@@ -471,7 +471,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 			$output = apply_filters( 'ctc_group_demographic_container_output', '', $group_data ); // allow filtering
 			if( ! empty( $output ) ) return $output;
 			
-			$output =  '<div class="ctcex_groups_container">';
+			$output = '<div class="ctcex_groups_container">';
 			
 			foreach( $group_data as $group ){
 				$day = $group[ 'day' ] ? date_i18n( 'l', strtotime( 'next ' . $group[ 'day' ] ) ): '';
@@ -484,7 +484,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 				$demos = explode( ", ", $group[ 'demographic_sl' ] );
 				$classes = array_merge( $classes, $demos );
 				
-				$output .= '<div class="ctcex_group ' . join( ' ', $classes ) . '">';
+				$output .= '<div class="ctcex_group mix ' . join( ' ', $classes ) . '">';
 				$output .= '	<h5 class="ctcex_group_name">' . $group[ 'name' ] . '</h5>';
 				$output .= '	<div class="ctcex_group_data">';
 				$output .= "		<div class='ctcex_group_day_time'>{$day}'s {$time}</div>";				
@@ -492,7 +492,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 				$output .= $group[ 'leader_em' ] ?  '			<div class="ctcex_group_leader_email"><b>' . __( 'Email', 'ctcex' ) . ":</b> {$group[ 'leader_em' ]}</div>" : '';
 				$output .= $group[ 'leader_ph' ] ?  '			<div class="ctcex_group_leader_phone"><b>' . __( 'Phone', 'ctcex' ) . ":</b> {$this->format_phone( $group[ 'leader_ph' ] )}</div>" : '';
 				$output .= $group[ 'address' ] ? '			<div class="ctcex_group_address">' . nl2br( $group[ 'address' ] ) . '</div>' : '';
-				$output .= $group[ 'has_childcare' ] ? '			<div class="ctcex_group_haschildcare">' . __( 'Childc are provided', 'ctcex' ) . '</div>' : '';
+				$output .= $group[ 'has_childcare' ] ? '			<div class="ctcex_group_haschildcare">' . __( 'Childcare provided', 'ctcex' ) . '</div>' : '';
 				
 				$output .= '		</div><!-- .ctcex_group_data -->';
 				$output .= '	</div><!-- .ctcex_group -->';
@@ -510,7 +510,8 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 		function scripts(){
 			
 			// enqueue scripts
-			//wp_enqueue_script...
+			wp_enqueue_script( 'mixitup', 'http://cdn.jsdelivr.net/gh/patrickkunka/mixitup@3.2.1/dist/mixitup.min.js', array( 'jquery' ) );
+			
 			//wp_enqueue_style...
 		}
 		
