@@ -87,7 +87,7 @@ if( ! class_exists( 'CTCEX_Sermon' ) ) {
 			$posts = new WP_Query( $query );		
 			if( $posts->have_posts() ):
 				while ( $posts->have_posts() ) :
-					
+					$posts->the_post();
 					$data = ctcex_get_sermon_data( get_the_ID() );
 					
 				endwhile;

@@ -176,7 +176,7 @@ if ( ! class_exists( 'CTCEX_Events' ) ) {
 			$data = array();
 			if( $posts->have_posts() ):
 				while ( $posts->have_posts() ) :
-				
+					$posts->the_post();
 					$data[] = ctcex_get_sermon_data( get_the_ID() );
 					
 				endwhile;
