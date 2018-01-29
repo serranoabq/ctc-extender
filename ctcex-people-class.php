@@ -105,10 +105,10 @@ if( ! class_exists( 'CTCEX_People' ) ) {
 				);
 			}
 			
-			$posts = new WP_Query( $query );		
-			if( $posts->have_posts() ):
-				while ( $posts->have_posts() ) :
-					$posts->the_post();
+			$m_posts = new WP_Query( $query );		
+			if( $m_posts->have_posts() ):
+				while ( $m_posts->have_posts() ) :
+					$m_posts->the_post();
 					$data[] = ctcex_get_person_data( get_the_ID() );
 					
 				endwhile;

@@ -381,10 +381,10 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 				'posts_per_page'		=> -1,
 			); 
 			
-			$posts = new WP_Query( $query );
+			$m_posts = new WP_Query( $query );
 			
-			if( $posts->have_posts() ):
-				while ( $posts->have_posts() ) : $posts->the_post();
+			if( $m_posts->have_posts() ):
+				while ( $m_posts->have_posts() ) : $m_posts->the_post();
 					
 					$data[] = ctcex_get_group_data( get_the_ID() );
 					
