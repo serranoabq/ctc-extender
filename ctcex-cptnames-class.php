@@ -21,8 +21,7 @@ class CTCEX_CPTNames {
 		add_filter( 'ctc_post_type_sermon_args', array( $this, 'ctc_slugs' ), 10, 1);
 		add_filter( 'ctc_post_type_location_args', array( $this,'ctc_slugs' ), 10, 1);
 		add_filter( 'ctc_taxonomy_sermon_series_args', array( $this,'ctc_slugs' ), 10, 1);
-		add_filter( 'ctc_post_type_event_args', array( 'ctc_slugs' ), 10, 1);
-		add_filter( 'ctcex_post_type_group_args', array( $this,'ctc_slugs' ), 10, 1);
+		//add_filter( 'ctc_post_type_event_args', array( 'ctc_slugs' ), 10, 1);
 		
 		// Hijack the topic taxonomy for other purposes
 		add_filter( 'ctc_taxonomy_sermon_topic_args', array( $this,'ctc_slugs' ), 10, 1);
@@ -54,7 +53,7 @@ class CTCEX_CPTNames {
 
 		add_settings_section(
 			'ctcex_ctcexSettings_section', 
-			__( 'Church Theme Content Names', 'ctcex' ), 
+			__( 'Your section description', 'ctcex' ), 
 			array( $this, 'settings_section_callback' ), 
 			'ctcexSettings'
 		);
@@ -131,17 +130,6 @@ class CTCEX_CPTNames {
 			)
 		);
 
-		add_settings_field( 
-			'ctcex-groups', 
-			__( 'Groups', 'ctcex' ), 
-			array( $this, 'textfield_render' ), 
-			'ctcexSettings', 
-			'ctcex_ctcexSettings_section', 
-			array( 
-				'default' => __( 'Groups' , 'ctcex' ),
-				'id'      => 'ctcex-groups',
-			)
-		);
 
 	}
 
