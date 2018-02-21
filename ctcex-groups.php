@@ -49,7 +49,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 				'public'      => true,
 				'has_archive' => true,
 				'rewrite'     => array(
-					'slug'        => 'small-group',
+					'slug'        => 'small-groups',
 					'with_front'  => true,
 					'feeds'       => false, //ctc_feature_supported( 'groups' )
 				),

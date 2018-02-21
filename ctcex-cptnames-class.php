@@ -21,7 +21,7 @@ class CTCEX_CPTNames {
 		add_filter( 'ctc_post_type_sermon_args', array( $this, 'ctc_slugs' ), 10, 1);
 		add_filter( 'ctc_post_type_location_args', array( $this,'ctc_slugs' ), 10, 1);
 		add_filter( 'ctc_taxonomy_sermon_series_args', array( $this,'ctc_slugs' ), 10, 1);
-		add_filter( 'ctc_post_type_event_args', array( 'ctc_slugs' ), 10, 1);
+		add_filter( 'ctc_post_type_event_args', array( $this, 'ctc_slugs' ), 10, 1);
 		add_filter( 'ctcex_post_type_group_args', array( $this,'ctc_slugs' ), 10, 1);
 		
 		// Hijack the topic taxonomy for other purposes
@@ -132,14 +132,14 @@ class CTCEX_CPTNames {
 		);
 
 		add_settings_field( 
-			'ctcex-groups', 
+			'ctc-small-groups', 
 			__( 'Groups', 'ctcex' ), 
 			array( $this, 'textfield_render' ), 
 			'ctcexSettings', 
 			'ctcex_ctcexSettings_section', 
 			array( 
 				'default' => __( 'Groups' , 'ctcex' ),
-				'id'      => 'ctcex-groups',
+				'id'      => 'ctc-small-groups',
 			)
 		);
 
@@ -223,7 +223,7 @@ class CTCEX_CPTNames {
 		$old_slug = $args['rewrite']['slug'];
 		$old_name = $args['labels']['name'];
 		$old_singular_name = $args['labels']['singular_name'];
-		
+
 		$options = get_option( 'ctcex_settings' );
 		$option_name = 'ctc-' . $old_slug;
 		
@@ -240,7 +240,7 @@ class CTCEX_CPTNames {
 		list( $new_name, $new_singular_name ) = array_pad( explode( "/", $option_value ), 2, $option_value );
 		
 		// New slug
-		$new_slug = sanitize_title( $new_name, $old_slug);
+		$new_slug = sanitize_title( $new_name, $old_slug );
 		
 		// Search and replace in the arguments 
 		$names = array( $old_name, strtolower( $old_name ), $old_singular_name, strtolower( $old_singular_name ) );
