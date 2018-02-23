@@ -98,7 +98,7 @@ function ctcex_update_recurring_events(){
 // @return string Value of option or default value if not found
 function ctcex_get_option( $option, $default = '' ){
 	$options = get_option( 'ctcex_settings' );
-	if( $options[ $option ] )
+	if( isset( $options[ $option ] ) )
 		return apply_filters( 'ctcex_translate', $option, $options[ $option ] );
 	else
 		return $default;

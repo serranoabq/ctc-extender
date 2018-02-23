@@ -9,7 +9,7 @@ if( ! class_exists( 'CTCEX_Sermon' ) ) {
 	
 	class CTCEX_Sermon {
 		
-		public $version = '1.1';
+		public $version = '1.11';
 		
 		function __construct() {
 			
@@ -74,6 +74,8 @@ if( ! class_exists( 'CTCEX_Sermon' ) ) {
 				'posts_per_page'		=> 1,
 			); 
 			
+			$data = array();
+			
 			if( ! empty( $topic ) )  {
 				$query[ 'tax_query' ] = array( 
 					array(
@@ -130,35 +132,43 @@ if( ! class_exists( 'CTCEX_Sermon' ) ) {
 			
 			$output = ''; 
 			
-																		
-		 
+			$name = isset( $sermon_data[ 'name' ] ) ? $sermon_data[ 'name' ] : '';
+			$permalink = isset( $sermon_data[ 'permalink' ] ) ? $sermon_data[ 'permalink' ] : '';
+			
 			// Get date
 			$date_src = sprintf( '<div class="%s"><b> %s:</b> %s</div>', $classes[ 'date' ], __( 'Date', 'ctcex' ), get_the_date() );
 			
 			// Get speaker
-			$speaker_src = $sermon_data[ 'speakers' ] ? sprintf( '<div class="%s"><b>%s:</b> %s</div>', $classes[ 'speaker' ], __( 'Speaker', 'ctcex' ), $sermon_data[ 'speakers' ] ) : '';
+			$speaker_src = isset( $sermon_data[ 'speakers' ] ) ? sprintf( '<div class="%s"><b>%s:</b> %s</div>', $classes[ 'speaker' ], __( 'Speaker', 'ctcex' ), $sermon_data[ 'speakers' ] ) : '';
 			
 			// Get series
-			$series_src = $sermon_data[ 'series' ] ?	sprintf( '<div class="%s"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'series' ],  __( 'Series', 'ctcex' ), $sermon_data[ 'series_link' ], $sermon_data[ 'series' ] ) : '';
+			$series = isset( $sermon_data[ 'series' ] ) ? $sermon_data[ 'series' ] : '';
+			$series_link = $series && isset( $sermon_data[ 'series_link' ] ) ? sprintf( '<a href="%s">%s</a>', $sermon_data[ 'series_link' ], $series ) : $series;
+			$series_src = $series ?	sprintf( '<div class="%s"><b>%s:</b> %s</div>', $classes[ 'series' ],  __( 'Series', 'ctcex' ), $series_link ) : '';
 			
 			// Get topics
 			// Topic name
 			$topic_name = explode( '/', ctcex_get_option( 'ctc-sermon-topic' , __( 'Topic', 'ctcex') ) );
 			$topic_name = ucfirst( array_pop(  $topic_name ) );
-			$topic_src = $sermon_data[ 'topic' ] ? sprintf( '<div class="%s"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'topic' ], $topic_name, $sermon_data[ 'topic_link' ], $sermon_data[ 'topic' ] ) : '';
+			$topic = isset( $sermon_data[ 'topic' ] ) ? $sermon_data[ 'topic' ] : '';
+			$topic_link = $topic && isset( $sermon_data[ 'topic_link' ] ) ? sprintf( '<a href="%s">%s</a>', $sermon_data[ 'topic_link' ], $topic ) : $topic;
+			$topic_src = $topic ? sprintf( '<div class="%s"><b>%s:</b> %s</div>', $classes[ 'topic' ], $topic_name, $topic_link ) : '';
 
 			// Get audio link
-			$audio_link_src = $sermon_data[ 'audio' ] ? sprintf( '<div class="%s"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'audio-link' ], __( 'Audio', 'ctcex' ), $sermon_data[ 'audio' ], __( 'Download audio', 'ctcex' ) ) : '';
+			$audio = isset( $sermon_data[ 'audio' ] ) ? $sermon_data[ 'audio' ] : '';
+			$audio_link_src = $audio ? sprintf( '<div class="%s"><b>%s:</b> <a href="%s">%s</a></div>', $classes[ 'audio-link' ], __( 'Audio', 'ctcex' ), $audio, __( 'Download audio', 'ctcex' ) ) : '';
 			
 			// Get audio display
-			$audio_src = $sermon_data[ 'audio' ] ? sprintf( '<div class="%s">%s</div>', $classes[ 'audio' ], wp_audio_shortcode( array( 'src' => $sermon_data[ 'audio' ] ) ) ) : '';
+			$audio_src = $audio ? sprintf( '<div class="%s">%s</div>', $classes[ 'audio' ], wp_audio_shortcode( array( 'src' => $audio ) ) ) : '';
 			
 			// Get video display
-			$video_iframe_class = strripos( $sermon_data[ 'video' ], 'iframe' ) ? 'iframe-container' : '';
-			$video_src = $sermon_data[ 'video' ] ? sprintf( '<div class="%s %s">%s</div>', $classes[ 'video' ], $video_iframe_class, $video_iframe_class ? $sermon_data[ 'video' ] : wp_video_shortcode( array( 'src' => $sermon_data[ 'video' ] ) ) ) : '';
+			$video = isset( $sermon_data[ 'video' ] ) ? $sermon_data[ 'video' ] : '';
+			$video_iframe_class = strripos( $video, 'iframe' ) ? 'iframe-container' : '';
+			$video_src = $video ? sprintf( '<div class="%s %s">%s</div>', $classes[ 'video' ], $video_iframe_class, $video_iframe_class ? $video : wp_video_shortcode( array( 'src' => $video ) ) ) : '';
 	
 			// Use the image as a placeholder for the video
-			$img_overlay_class = $sermon_data[ 'video' ] && $sermon_data[ 'img' ] ? 'ctcex-overlay' : '';
+			$img = isset( $sermon_data[ 'img' ] ) ? $sermon_data[ 'img' ] : '';
+			$img_overlay_class = $video && $img ? 'ctcex-overlay' : '';
 			$img_overlay_js = $img_overlay_class ? sprintf(
 				'<div class="ctcex-overlay">
 					<i class="' . ( $glyph === 'gi' ? 'genericon genericon-play' : 'fa fa-play' ) . '"></i>
@@ -183,7 +193,7 @@ if( ! class_exists( 'CTCEX_Sermon' ) ) {
 				) : '' ;
 				
 			// Get image
-			$img_src = $sermon_data[ 'img' ] ? sprintf( '%s<img class="%s" src="%s" alt="%s" width="960"/>', $img_overlay_js, $classes[ 'img' ], $sermon_data[ 'img' ], $sermon_data[ 'name' ] ) : '';
+			$img_src = $img ? sprintf( '%s<img class="%s" src="%s" alt="%s" width="960"/>', $img_overlay_js, $classes[ 'img' ], $img, $name ) : '';
 			$video_src = $img_overlay_class ? $img_src : $video_src;
 			
 			$img_video_output = $video_src ? $video_src : $img_src . $audio_src;
@@ -205,8 +215,8 @@ if( ! class_exists( 'CTCEX_Sermon' ) ) {
 				$classes[ 'media' ],
 				$img_video_output,
 				$classes[ 'details' ],
-				$sermon_data[ 'permalink' ],
-				$sermon_data[ 'name' ],
+				$permalink,
+				$name,
 				$date_src,
 				$speaker_src,
 				$series_src,
