@@ -9,7 +9,7 @@ if ( ! class_exists( 'CTCEX_Events' ) ) {
 	
 	class CTCEX_Events {
 		
-		public $version = '1.2';
+		public $version = '1.21';
 		
 		function __construct() {
 			
@@ -222,7 +222,10 @@ if ( ! class_exists( 'CTCEX_Events' ) ) {
 			foreach( $event_data as $data ){
 				
 				// Event date
-				$date_str = sprintf( '%s%s',  date_i18n( 'l, F j', strtotime( $data[ 'start' ] ) ), $data[ 'start' ] != $data[ 'end' ] ? ' - '. date_i18n( 'l, F j', strtotime( $data[ 'end' ] ) ) : '' );
+				$start = isset( $data[ 'start' ] ) ? $data[ 'start' ] : '';
+				$end = isset( $data[ 'end' ] ) ? $data[ 'end' ] : '';
+				
+				$date_str = $start ? sprintf( '%s%s',  date_i18n( 'l, F j', strtotime( $start ) ), $start != $end ? ' - '. date_i18n( 'l, F j', strtotime( $end ) ) : '' ) : '';
 				$date_src = sprintf( 
 					'<div class="%s"><i class="%s %s"></i> %s</div>', 
 					$classes[ 'date' ], 
@@ -231,7 +234,10 @@ if ( ! class_exists( 'CTCEX_Events' ) ) {
 					$date_str );
 				
 				// Event time
-				$time_str = sprintf( '%s%s',  $data[ 'time' ], $data[ 'endtime' ] ? ' - '. $data[ 'endtime' ] : '' );
+				$time = isset( $data[ 'time' ] ) ? $data[ 'time' ] : '';
+				$endtime = isset( $data[ 'endtime' ] ) ? $data[ 'endtime' ] : '';
+				
+				$time_str = $time ? sprintf( '%s%s',  $time, $endtime ? ' - '. $endtime : '' ) : '';
 				$time_src = '';
 				if( $time_str ) {
 					$time_src = sprintf( 
@@ -243,7 +249,9 @@ if ( ! class_exists( 'CTCEX_Events' ) ) {
 				}
 				
 				// Event location
-				$location_txt = $data[ 'venue' ] ? $data[ 'venue' ] : $data[ 'address' ];
+				$venue = isset( $data[ 'venue' ] ) ? $data[ 'venue' ] : '';
+				$address = isset( $data[ 'address' ] ) ? $data[ 'address' ] : '';
+				$location_txt = $venue ? $venue : $address;
 				$location_src = '';
 				if( $location_txt ) {
 					$location_src = sprintf( 
@@ -256,21 +264,21 @@ if ( ! class_exists( 'CTCEX_Events' ) ) {
 				
 				// Event categories
 				$categories_src = '';
-				if( $data[ 'categories' ] ) {
+				if( isset( $data[ 'categories' ] ) ) {
 					$categories_src = sprintf( 
 						'<div class="%s"><i class="%s %s-tag"></i> %s</div>', 
 						$classes[ 'location' ], 
 						$glyph === 'gi' ? 'genericon' : 'fa', 
 						$glyph === 'gi' ? 'genericon' : 'fa', 
 						$data[ 'categories' ] );
-				}
+				} 
 				
 				// Get image
-				$img_src = $data[ 'img' ] ? sprintf( 
+				$img_src = isset( $data[ 'img' ] ) ? sprintf( 
 					'%s
 						<img class="%s" src="%s" alt="%s" width="960"/>
 					%s', 
-					$data[ 'map_used' ] ? '<a href="' . $data[ 'map_url' ] . '" target="_blank">' : '',
+					isset( $data[ 'map_used' ] ) && isset( $data[ 'map_url' ] ) ? '<a href="' . $data[ 'map_url' ] . '" target="_blank">' : '',
 					$classes[ 'img' ], 
 					$data[ 'img' ], 
 					$data[ 'name' ],
@@ -353,11 +361,13 @@ if ( ! class_exists( 'CTCEX_Events' ) ) {
 			foreach( $event_data as $data ){
 				
 				// Event date
-				$date_str = sprintf( 
+				$start = isset( $data[ 'start' ] ) ? $data[ 'start' ] : '';
+				$time = isset( $data[ 'time' ] ) ? $data[ 'time' ] : '';
+				$date_str =  $start ? sprintf( 
 					'%s%s',  
 					date_i18n( 'D, M j', strtotime( $data[ 'start' ] ) ),
-					$data[ 'time' ] ? ' @ ' . $data[ 'time' ] : ''
-				);
+					$time ? ' @ ' . $time : ''
+				) : '';
 				$date_src = sprintf( 
 					'<td class="%s" data-th="When?">%s</td>', 
 					$classes[ 'date' ], 
@@ -365,11 +375,13 @@ if ( ! class_exists( 'CTCEX_Events' ) ) {
 				);
 				
 				// Event location
-				$location_txt = $data[ 'venue' ] ? $data[ 'venue' ] : $data[ 'address' ];
+				$venue = isset( $data[ 'venue' ] ) ? $data[ 'venue' ] : '';
+				$address = isset( $data[ 'address' ] ) ? $data[ 'address' ] : '';
+				$location_txt = $venue ? $venue : $address;
 				$location_src = sprintf( 
 					'<td class="%s" data-th="Where?">%s</td>', 
 					$classes[ 'location' ], 
-					$location_txt ? $location_txt : '' 
+					$location_txt 
 				);
 								
 				// Prepare output
