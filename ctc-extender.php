@@ -1,16 +1,16 @@
 <?php
 /*
     Plugin Name: CTC Extender
-    Description: Plugin to supplement the Church Theme Content plugin by adding additional features. Requires <strong>Church Theme Content</strong> plugin.
-    Version: 1.4.5
+    Description: Plugin to supplement the Church Content plugin by adding additional features. Requires <strong>Church Content</strong> plugin. Designed to work woth Church Content v2.0
+    Version: 2.0b
     Author: Justin R. Serrano
 */
 
 // No direct access
 if ( !defined( 'ABSPATH' ) ) exit;
 
-
 global $CTCEX;
+
 if( ! class_exists( 'CTC_Extender' ) ) {
 	require_once( sprintf( "%s/ctc-extender-class.php", dirname(__FILE__) ) );
 	$CTCEX = new CTC_Extender();

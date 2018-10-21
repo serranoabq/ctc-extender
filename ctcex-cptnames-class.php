@@ -8,194 +8,24 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class CTCEX_CPTNames {
 	
 	function __construct() {
-		$this->version = '1.0';
+		$this->version = '2.0';
 		
 		// Church Theme Content is REQUIRED
 		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
 		
-		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+		//add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'settings_init' ) );
 		
 		// Change slugs in the custom CTC types
-		add_filter( 'ctc_post_type_person_args', array( $this, 'ctc_slugs' ), 10, 1);
-		add_filter( 'ctc_post_type_sermon_args', array( $this, 'ctc_slugs' ), 10, 1);
-		add_filter( 'ctc_post_type_location_args', array( $this,'ctc_slugs' ), 10, 1);
-		add_filter( 'ctc_taxonomy_sermon_series_args', array( $this,'ctc_slugs' ), 10, 1);
-		add_filter( 'ctc_post_type_event_args', array( $this, 'ctc_slugs' ), 10, 1);
-		add_filter( 'ctcex_post_type_group_args', array( $this,'ctc_slugs' ), 10, 1);
-		
-		// Hijack the topic taxonomy for other purposes
-		add_filter( 'ctc_taxonomy_sermon_topic_args', array( $this,'ctc_slugs' ), 10, 1);
+		add_filter( 'ctc_post_type_person_args', array( $this, 'ctcex_post_type_args' ), 10, 1);
+		add_filter( 'ctc_post_type_sermon_args', array( $this, 'ctcex_post_type_args' ), 10, 1);
+		add_filter( 'ctc_post_type_location_args', array( $this,'ctcex_post_type_args' ), 10, 1);
+		add_filter( 'ctc_post_type_event_args', array( $this, 'ctcex_post_type_args' ), 10, 1);
+		add_filter( 'ctcex_post_type_group_args', array( $this,'ctcex_post_type_args' ), 10, 1);
+		add_filter( 'ctc_taxonomy_sermon_series_args', array( $this,'ctcex_post_type_args' ), 10, 1);
 		
 	}
 
-	/**
-	 * Add admin menu entry
-	 *
-	 * @since  1.0
-	 */
-	function add_admin_menu() { 
-		add_options_page( 
-			'CTC Extender', 
-			'CTC Extender', 
-			'manage_options', 
-			'ctc-extender',
-			array( $this, 'options_page' ) );
-	}
-
-	/**
-	 * Initialize settings
-	 *
-	 * @since  1.0
-	 */
-	function settings_init() { 
-
-		register_setting( 'ctcexSettings', 'ctcex_settings', array( $this, 'validate_settings' ) );
-
-		add_settings_section(
-			'ctcex_ctcexSettings_section', 
-			__( 'Church Theme Content Names', 'ctcex' ), 
-			array( $this, 'settings_section_callback' ), 
-			'ctcexSettings'
-		);
-
-		add_settings_field( 
-			'ctc-sermons', 
-			__( 'Sermons', 'ctcex' ), 
-			array( $this, 'textfield_render' ), 
-			'ctcexSettings', 
-			'ctcex_ctcexSettings_section', 
-			array( 
-				'default' => __( 'Sermons' , 'ctcex' ),
-				'id'      => 'ctc-sermons',
-			)
-		);
-
-		add_settings_field( 
-			'ctc-sermon-series', 
-			__( 'Sermon Series', 'ctcex' ), 
-			array( $this, 'textfield_render' ), 
-			'ctcexSettings', 
-			'ctcex_ctcexSettings_section', 
-			array( 
-				'default' => __( 'Sermon Series' , 'ctcex' ),
-				'id'      => 'ctc-sermon-series',
-			)
-		);
-
-		add_settings_field( 
-			'ctc-sermon-topic', 
-			__( 'Sermon Topics', 'ctcex' ), 
-			array( $this, 'textfield_render' ), 
-			'ctcexSettings', 
-			'ctcex_ctcexSettings_section' ,
-			array( 
-				'default' => __( 'Sermon Topics' , 'ctcex' ),
-				'id'      => 'ctc-sermon-topic',
-			)
-		);
-
-		add_settings_field( 
-			'ctc-people', 
-			__( 'People', 'ctcex' ), 
-			array( $this, 'textfield_render' ), 
-			'ctcexSettings', 
-			'ctcex_ctcexSettings_section', 
-			array( 
-				'default' => __( 'People' , 'ctcex' ),
-				'id'      => 'ctc-people',
-			)
-		);
-
-		add_settings_field( 
-			'ctc-locations', 
-			__( 'Locations', 'ctcex' ), 
-			array( $this, 'textfield_render' ), 
-			'ctcexSettings', 
-			'ctcex_ctcexSettings_section', 
-			array( 
-				'default' => __( 'Locations' , 'ctcex' ),
-				'id'      => 'ctc-locations',
-			)
-		);
-
-		add_settings_field( 
-			'ctc-events', 
-			__( 'Events', 'ctcex' ), 
-			array( $this, 'textfield_render' ), 
-			'ctcexSettings', 
-			'ctcex_ctcexSettings_section', 
-			array( 
-				'default' => __( 'Events' , 'ctcex' ),
-				'id'      => 'ctc-events',
-			)
-		);
-
-		add_settings_field( 
-			'ctc-small-groups', 
-			__( 'Groups', 'ctcex' ), 
-			array( $this, 'textfield_render' ), 
-			'ctcexSettings', 
-			'ctcex_ctcexSettings_section', 
-			array( 
-				'default' => __( 'Groups' , 'ctcex' ),
-				'id'      => 'ctc-small-groups',
-			)
-		);
-
-	}
-
-	/**
-	 * Display the option text field
-	 *
-	 * @since  1.0
-	 * @params mixed $args  Arguments
-	 */
-	function textfield_render( $args ) { 
-
-		extract( $args );
-		
-		$options = get_option( 'ctcex_settings' );
-		
-		?>
-		<input type="text" name="ctcex_settings[<?php echo $id; ?>]" class="regular-text"value="<?php echo $options[$id]; ?>" placeholder = "<?php echo $default; ?>">
-		<?php
-
-	}
-
-	/**
-	 * Display the settings decription
-	 *
-	 * @since  1.0
-	 */
-	function settings_section_callback() { 
-
-		echo __( 'Enter the display names to use for the different church theme content types. For instance <code>People</code> could be <code>Staff</code>, <code>Sermons</code> could be <code>Messages</code> or <code>Locations</code> could be <code>Places</code>. Make sure to resave the Permalinks to update the permalinks. If separate singular and plural names are desired, write them as <code>Plural/Singluar</code> (i.e., <code>Campuses/Campus</code>).', 'ctcex' );
-
-	}
-
-	/**
-	 * Create the option page
-	 *
-	 * @since  1.0
-	 */
-	function options_page() { 
-
-		?>
-		<form action='options.php' method='post'>
-			
-			<h2>Church Theme Content Extender</h2>
-			
-			<?php settings_fields( 'ctcexSettings' ); ?>
-			<?php do_settings_sections( 'ctcexSettings' ); ?>	 
-			
-			<input name="reset" id="reset" type="submit" class="button reset-button button-secondary" value="<?php _e( 'Restore Defaults', 'ctcex' ); ?>" onclick="return confirm(\'<?php _e( 'Click OK to reset. Any theme settings will be lost!', 'ctcex' );?>\');" />
-			<input name="submit" id="submit" type="submit" class="button button-primary" value="<?php _e( 'Save Changes', 'ctcex' ); ?>" />
-			
-		</form>
-		<?php
-
-	}
 	
 	/**
 	 * Validate inputs
@@ -260,5 +90,96 @@ class CTCEX_CPTNames {
 		return $args;
 	}
 
+	/**
+	 * Get new singular/plural names for post types
+	 *
+	 * @since  2.0
+	 * @params string $post_type  Post type
+	 * @params string $form       'singular' or 'plural'
+	 * @params string $default    Default value
+	 */
+	function ctcex_post_type_singular_plural( $post_type, $form = 'singular', $default ){
+		$avail_post_types = array( 'sermons', 'events', 'people', 'locations', 'groups', 'sermon-series' );
+		if( in_array( $post_type, $avail_post_types ) ){			
+			return get_option( "ctcex_{$post_type}_{$form}", $form );
+		}
+		return $default;
+	}
+	
+	/**
+	 * Change the arguments used in registering custom post types
+	 *
+	 * @since  2.0
+	 * @params mixed $args  Arguments to filter
+	 */
+	function ctcex_post_type_args( $args ){
+		// default settings
+		$old_slug = $args['rewrite']['slug'];
+		$old_plural = $arg['labels']['name'];
+		$old_singular = $arg['labels']['singular_name'];
+		
+		// New settings
+		$new_singular = ctcex_post_type_singular_plural( $old_slug, 'singular', $old_singular );
+		$new_plural = ctcex_post_type_singular_plural( $old_slug, 'plural', $old_plural );
+		$new_slug = sanitize_title( $new_plural, $old_slug );
+		
+		$add = sprintf( _x( 'Add %s', 'Add post type', 'ctcex' ), $new_singular );
+		$edit = sprintf( _x( 'Edit %s', 'Edit post type', 'ctcex' ), $new_singular );
+		$new = sprintf( _x( 'New %s', 'New post type', 'ctcex' ), $new_singular );
+		$all = sprintf( _x( 'All %s', 'All post types', 'ctcex' ), $new_plural );
+		$views = sprintf( _x( 'View %s', 'View post type', 'ctcex' ), $new_singular );
+		$viewp = sprintf( _x( 'View %s', 'View post types', 'ctcex' ), $new_plural );
+		$search = sprintf( _x( 'Search %s', 'Search post types', 'ctcex' ), $new_plural );
+		$none = sprintf( _x( 'No %s found', 'No post types found', 'ctcex' ), $new_plural );
+		
+		
+		// Taxonomy-specific
+		$is_tax = array_key_exists( 'hierarchichal', $args );
+		$popular = sprintf( _x( 'Popular %s', 'Popular taxonomy', 'ctcex' ), $new_plural );
+		$update = sprintf( _x( 'Update %s', 'Update taxonomy', 'ctcex' ), $new_singular );
+		$commas = sprintf( _x( 'Separate %s with commas', 'Popular taxonomy', 'ctcex' ), strtolower( $new_plural ) );
+		$addremove = sprintf( _x( 'Add or remove %s', 'Popular taxonomy', 'ctcex' ), strtolower( $new_plural ) );
+		$choose = sprintf( _x( 'Choose from the most used %s', 'Popular taxonomy', 'ctcex' ), strtolower( $new_plural ) );
+		
+		if( $is_tax ){
+			$new_labels = array(
+				'name'								=> esc_html( $new_plural ),
+				'singular_name'				=> esc_html( $new_singular ),
+				'search_items' 				=> esc_html( $search ),
+				'search_items' 				=> esc_html( $search ),
+				'popular_items' 			=> esc_html( $popular ),
+				'all_items' 					=> esc_html( $add ),
+				'parent_item' 				=> null,
+				'parent_item_colon' 	=> null,
+				'edit_item' 					=> esc_html( $edit ),
+				'update_item' 				=> esc_html( $update ),
+				'add_new_item' 				=> esc_html( $add ),
+				'new_item_name' 			=> esc_html( $new ),
+				'separate_items_with_commas' 			=> esc_html( $commas ),
+				'add_or_remove_items' => esc_html( $addremove ),
+				'choose_from_most_used' => esc_html( $choose ),
+				'menu_name' 					=> esc_html( $new_plural )
+			);
+		} else {
+			$new_labels = array(
+				'name'								=> esc_html( $new_plural ),
+				'singular_name'				=> esc_html( $new_singular ),
+				'add_new' 						=> esc_html( $add ),
+				'add_new_item' 				=> esc_html( $add ),
+				'edit_item' 					=> esc_html( $edit ),
+				'new_item' 						=> esc_html( $new ),
+				'all_items' 					=> esc_html( $add ),
+				'view_item' 					=> esc_html( $views ),
+				'view_items'					=> esc_html( $viewp ),
+				'search_items' 				=> esc_html( $search ),
+				'not_found' 					=> esc_html( $none ),
+				'not_found_in_trash' 	=> esc_html( $none )
+			);
+		}
+		$args[ 'labels' ] = $new_labels;
+		$args[ 'rewrite' ][ 'slug' ] = $new_slug;
+		
+		return $args;
+	}
 	
 }

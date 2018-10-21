@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class CTC_Extender {
 	
-	public $version = '1.4.5'; 
+	public $version = '2.0b'; 
 	
 	function __construct() {
 		
@@ -51,6 +51,7 @@ class CTC_Extender {
 		require_once( sprintf( "%s/ctcex-full-calendar-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-taximages-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-cptnames-class.php", dirname(__FILE__) ) );
+		require_once( sprintf( "%s/ctcex-customizer-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-sermon-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-people-class.php", dirname(__FILE__) ) );
 		require_once( sprintf( "%s/ctcex-events-class.php", dirname(__FILE__) ) );
@@ -65,6 +66,9 @@ class CTC_Extender {
 		
 		// Add Naming options
 		new CTCEX_CPTNames();
+		
+		// Add Customizer options
+		new CTCEX_Customizer();
 		
 		// Add Sermon shortcode
 		new CTCEX_Sermon();
@@ -102,7 +106,7 @@ class CTC_Extender {
 		$ser_series_link = '';
 		$series = get_the_terms( $post_id, 'ctc_sermon_series');
 		
-		if( $series && ! is_wp_error( $series) ) {
+		if( $series && ! is_wp_error( $series ) ) {
 			$series = array_values ( $series );
 			$series = array_shift( $series );
 			$ser_series = $series -> name;
@@ -115,7 +119,7 @@ class CTC_Extender {
 		if( $speakers && ! is_wp_error( $speakers ) ) {
 			$speakers_A = array();
 			foreach ( $speakers as $speaker ) { $speakers_A[] = $speaker -> name; }
-			$last = array_pop($speakers_A);
+			$last = array_pop( $speakers_A );
 			if( $speakers_A ) {
 				$last = implode(', ', $speakers_A). ", and " .$last;
 			}
