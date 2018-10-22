@@ -46,7 +46,7 @@ if( ! class_exists( 'CTCEX_Groups' ) ) {
 					'not_found'          => __( 'No groups found', 'ctcex' ),
 					'not_found_in_trash' => __( 'No groups found in Trash', 'ctcex' )
 				),
-				'public'      => true,
+				'public'      => current_theme_supports( 'ctcex-groups' ),
 				'has_archive' => true,
 				'rewrite'     => array(
 					'slug'        => 'small-groups',

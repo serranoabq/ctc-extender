@@ -26,7 +26,6 @@ class CTCEX_CPTNames {
 		
 	}
 
-	
 	/**
 	 * Validate inputs
 	 *
@@ -41,53 +40,6 @@ class CTCEX_CPTNames {
 		}
 		flush_rewrite_rules();
 		return false;		
-}
-	
-	/**
-	 * Change the slugs of the CTC CPTs according to the new names
-	 *
-	 * @since  1.0
-	 * @params mixed $args  Arguments
-	 */
-	function ctc_slugs( $args ){
-		$old_slug = $args['rewrite']['slug'];
-		$old_name = $args['labels']['name'];
-		$old_singular_name = $args['labels']['singular_name'];
-
-		$options = get_option( 'ctcex_settings' );
-		$option_name = 'ctc-' . $old_slug;
-		
-		if( ! $options[ $option_name ] ) 
-			return $args;
-		
-		if( $options[ $option_name ] == $old_name )
-			return $args;
-		
-		// Option is in the form of plural/singular
-		$option_value = $options[ $option_name ] ? $options[ $option_name ] : implode( '/', array( $old_name, $old_singular_name ) ) ;		
-					
-		// Get the new plural and singular names
-		list( $new_name, $new_singular_name ) = array_pad( explode( "/", $option_value ), 2, $option_value );
-		
-		// New slug
-		$new_slug = sanitize_title( $new_name, $old_slug );
-		
-		// Search and replace in the arguments 
-		$names = array( $old_name, strtolower( $old_name ), $old_singular_name, strtolower( $old_singular_name ) );
-		if( strpos( $old_name, 'Sermon ') !== false ) {
-			array_push( $names, str_replace( 'Sermon ', '', $old_name ), strtolower( str_replace( 'Sermon ', '', $old_name ) ), str_replace( 'Sermon ', '', $old_singular_name ), strtolower( str_replace( 'Sermon ', '', $old_singular_name ) ) );
-		}
-		$new_names = array( $new_name, strtolower( $new_name ), $new_singular_name, strtolower( $new_singular_name ) );
-		if( strpos( $old_name, 'Sermon ')  !== false ) {
-			array_push( $new_names, $new_name, strtolower( $new_name ), $new_singular_name, strtolower( $new_singular_name ) );
-		}
-		// Names are only changed in the labels
-		$args['labels'] = json_decode( str_replace( $names,  $new_names, json_encode( $args['labels'] ) ), true );
-		
-		// Change the slug
-		$args['rewrite']['slug'] = $new_slug;
-		
-		return $args;
 	}
 
 	/**

@@ -49,7 +49,7 @@ if ( ! class_exists( 'CTCEX_Events' ) ) {
 			// Filter the output of the whole shortcode
 			// Note: This filters the whole shortcode. Any styles and scripts needed by the 
 			//       new ouput will have to be included in the filtering function
-			// Use: add_filter( 'ctcex_eventslist_shortcode', '<<<callback>>>', 10, 4 ); 
+			// Use: add_filter( 'ctcex_events_shortcode', '<<<callback>>>', 10, 4 ); 
 			// Args: first argument is the output to filter; empty
 			//       <event_data> is the data extracted from event query; array of arrays
 			//       <glyph> is the glyph indicated in the shortcode
