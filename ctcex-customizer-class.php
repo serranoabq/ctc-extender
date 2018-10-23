@@ -19,20 +19,20 @@ class CTCEX_Customizer {
 	function customize_register( $wp_customize ) {
 
 		//** Options Panel **//
-		$this->customize_createPanel( $wp_customize, array(
+		$this->createPanel( $wp_customize, array(
 			'id'           => 'ctcex_options_panel',
 			'title'        => 'Church Content Options',
 		) );
 
 		// Podcasting options
-		$this->customize_createSection( $wp_customize, array(
+		$this->createSection( $wp_customize, array(
 			'id'           => 'ctcex_podcast',
 			'title'        => __( 'Podcasting', 'ctcex' ),
 			'description'  => __( 'Settings for audio podcast', 'ctcex' ),
 			'panel'        => 'ctcex_options_panel',
 		) );
 		// Description
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id'           => 'ctcex_podcast_desc',
 			'label'        => __( 'Podcast Description', 'ctcex' ),
 			'type'         => 'textarea',
@@ -40,7 +40,7 @@ class CTCEX_Customizer {
 			'section'      => 'ctcex_podcast',
 		) );
 		// Author
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id'           => 'ctcex_podcast_author',
 			'label'        => __( 'Podcast Author', 'ctcex' ),
 			'type'         => 'text',
@@ -48,7 +48,7 @@ class CTCEX_Customizer {
 			'section'      => 'ctcex_podcast',
 		) );
 		// Logo
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id'           => 'ctcex_podcast_logo',
 			'label'        => __( 'Podcast Logo', 'ctcex' ),
 			'type'         => 'image',
@@ -59,50 +59,53 @@ class CTCEX_Customizer {
 		
 		
 		// CTC alternate names
-		$this->customize_createSection( $wp_customize, array(
+		$this->createSection( $wp_customize, array(
 			'id'              => 'ctcex_names',
 			'title'           => __( 'Alternate Names', 'ctcex' ),
 			'description'     => __( 'Enter alternate names for Church Content post types, ', 'ctcex' ),
 			'panel'           => 'ctcex_options_panel',
 		) );
+		
 		// Sermons
-		$this->customize_createSetting( $wp_customize, array(
-			'id' 	              => 'ctcex_sermons_singular',
-			'type'              => 'text',
-			'label'             => __( 'Sermon Singular', 'ctcex' ),
-			'default'           => ctc_sermon_word_singular(),
-			'section'           => 'ctcex_names',
-		) );
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_sermons_plural',
 			'type'              => 'text',
 			'label'             => __( 'Sermon Plural', 'ctcex' ),
-			'default'           => ctc_sermon_word_plural(),
+			'description'       => sprintf( '<code>%s</code>', ctc_make_url_slug_bold( sanitize_title( ctc_post_type_label( 'ctc_sermon', 'plural' ) ) ) ),
+			'default'           => ctc_post_type_label( 'ctc_sermon', 'plural' ),
+			'sanitize_callback' => $this->sanitize_names,
 			'section'           => 'ctcex_names',
 		) );
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
+			'id' 	              => 'ctcex_sermons_singular',
+			'type'              => 'text',
+			'label'             => __( 'Sermon Singular', 'ctcex' ),
+			'default'           => ctc_post_type_label( 'ctc_sermon', 'singular' ),
+			'section'           => 'ctcex_names',
+		) );
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_sermon_series_singular',
 			'type'              => 'text',
 			'label'             => __( 'Sermon Series Singular', 'ctcex' ),
-			'default'           => ctc_sermon_word_singular(),
+			'default'           => $this->tax_label( 'ctc_sermon_series', 'singular' ),
 			'section'           => 'ctcex_names',
 		) );
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_sermon_series_plural',
 			'type'              => 'text',
 			'label'             => __( 'Sermon Series Plural', 'ctcex' ),
-			'default'           => ctc_sermon_word_plural(),
+			'default'           => $this->tax_label( 'ctc_sermon_series', 'plural' ),
 			'section'           => 'ctcex_names',
 		) );
 		// Event
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_events_singular',
 			'type'              => 'text',
 			'label'             => __( 'Event Singular', 'ctcex' ),
 			'default'           => ctc_post_type_label( 'ctc_event', 'singular' ),
 			'section'           => 'ctcex_names',
 		) );
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_events_plural',
 			'type'              => 'text',
 			'label'             => __( 'Event Plural', 'ctcex' ),
@@ -110,14 +113,14 @@ class CTCEX_Customizer {
 			'section'           => 'ctcex_names',
 		) );
 		// Person
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_people_singular',
 			'type'              => 'text',
 			'label'             => __( 'Person Singular', 'ctcex' ),
 			'default'           => ctc_post_type_label( 'ctc_person', 'singular' ),
 			'section'           => 'ctcex_names',
 		) );
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_people_plural',
 			'type'              => 'text',
 			'label'             => __( 'Person Plural', 'ctcex' ),
@@ -125,14 +128,14 @@ class CTCEX_Customizer {
 			'section'           => 'ctcex_names',
 		) );
 		// Location
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_locations_singular',
 			'type'              => 'text',
 			'label'             => __( 'Location Singular', 'ctcex' ),
 			'default'           => ctc_post_type_label( 'ctc_location', 'singular' ),
 			'section'           => 'ctcex_names',
 		) );
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_locations_plural',
 			'type'              => 'text',
 			'label'             => __( 'Location Plural', 'ctcex' ),
@@ -140,14 +143,14 @@ class CTCEX_Customizer {
 			'section'           => 'ctcex_names',
 		) );
 		// Groups
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_groups_singular',
 			'type'              => 'text',
 			'label'             => __( 'Group Singular', 'ctcex' ),
 			'default'           => ctc_post_type_label( 'ctcex_group', 'singular' ),
 			'section'           => 'ctcex_names',
 		) );
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_groups_plural',
 			'type'              => 'text',
 			'label'             => __( 'Group Plural', 'ctcex' ),
@@ -156,14 +159,14 @@ class CTCEX_Customizer {
 		) );
 		
 		// CTC default images
-		$this->customize_createSection( $wp_customize, array(
+		$this->createSection( $wp_customize, array(
 			'id'              => 'ctcex_images',
 			'title'           => __( 'Default Images', 'ctcex' ),
 			'description'     => __( 'Choose default images for use with sermons, events, and locations, ', 'ctcex' ),
 			'panel'           => 'ctcex_options_panel',
 		) );
 		// Sermon
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_sermon_default_image',
 			'type'              => 'image',
 			'label'             => __( 'Default Sermon Image', 'ctcex' ),
@@ -171,7 +174,7 @@ class CTCEX_Customizer {
 			'section'           => 'ctcex_images',
 		) );
 		// Event
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_event_default_image',
 			'type'              => 'image',
 			'label'             => __( 'Default Event Image', 'ctcex' ),
@@ -179,7 +182,7 @@ class CTCEX_Customizer {
 			'section'           => 'ctcex_images',
 		) );
 		// Location
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_location_default_image',
 			'type'              => 'image',
 			'label'             => __( 'Default Location Image', 'ctcex' ),
@@ -187,14 +190,14 @@ class CTCEX_Customizer {
 			'section'           => 'ctcex_images',
 		) );
 		// Person
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_person_dafault_image',
 			'type'              => 'image',
 			'label'             => __( 'Default Person Image', 'ctcex' ),
 			'default'           => '',
 			'section'           => 'ctcex_images',
 		) );
-		$this->customize_createSetting( $wp_customize, array(
+		$this->createSetting( $wp_customize, array(
 			'id' 	              => 'ctcex_group_dafault_image',
 			'type'              => 'image',
 			'label'             => __( 'Default Group Image', 'ctcex' ),
@@ -230,7 +233,7 @@ class CTCEX_Customizer {
 
 		// Available types and arguments
 		$available_types = array( 'text', 'number', 'checkbox', 'textarea', 'radio', 'select', 'dropdown-pages', 'email', 'url', 'date', 'hidden', 'image', 'color' );
-		$setting_def_args = array( 'type'=>'option', 'default'=> '', 'sanitize_callback'=>'', 'transport'=>'refresh' );
+		$setting_def_args = array( 'default'=> '', 'sanitize_callback'=>'', 'transport'=>'refresh' );
 		$control_def_args = array( 'type'=>'', 'label'=>'', 'description'=>'', 'priority'=>'', 'choices'=>'', 'section'=>'', 'active_callback'=>'' );
 
 		// Check for non-empty inputs, too
@@ -247,6 +250,7 @@ class CTCEX_Customizer {
 
 		// Split setting arguments and control arguments
 		$setting_args = array_intersect_key( $args, $setting_def_args );
+		$setting_args[ 'type' ] = 'option';
 		$control_args = array_intersect_key( $args, $control_def_args );
 
 		$wp_customize->add_setting( $id, $setting_args );
@@ -335,4 +339,38 @@ class CTCEX_Customizer {
 		return $input;
 	}
 
+	function tax_label( $tax, $form = false ){
+		// Empty if cannot get name.
+		$name = '';
+
+		// Get post type object.
+		$obj = get_taxonomy( $tax );
+
+		// Have object.
+		if ( ! empty( $obj ) ) {
+
+			// Singular form.
+			if ( 'singular' === $form && isset( $obj->labels->singular_name ) ) {
+				$name = $obj->labels->singular_name;
+			}
+
+			// Plural form.
+			// If not singular, assume plural.
+			elseif ( isset( $obj->labels->name ) ) {
+				$name = $obj->labels->name;
+			}
+
+		}
+
+		return $name;
+	}
+	
+	function sanitize_names( $name ){
+		if( isset( $name ) ){
+			flush_rewrite_rules();
+			return $name;
+		}
+		return false;
+	}
+	
 }

@@ -14,6 +14,9 @@ class CTC_Extender {
 		// Church Theme Content is REQUIRED
 		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
 				
+		// Remove PRO notices
+		add_action( 'plugins_loaded', array( $this, 'remove_pro_notices'), 10 );
+		
 		// Load plugin dependencies
 		add_action( 'plugins_loaded', array( $this, 'load_deps'), 18 );
 		
@@ -83,7 +86,11 @@ class CTC_Extender {
 		new CTCEX_Groups();
 	}
 	
-	
+	function remove_pro_notices(){
+		remove_action( 'ctmb_field-_ctc_event_recurrence', 'ctc_recurrence_field_upgrade_note' );
+		remove_action( 'ctmb_after_fields', 'ctc_no_recurrence_field_upgrade_note' );
+		remove_action( 'ctmb_before_fields', 'ctc_event_location_memory_upgrade_note' );
+	}
 	
 /********************************************		
 	CTC data shortcuts
@@ -598,6 +605,7 @@ class CTC_Extender {
 		
 		// Add daily recurrence 
 		$options = $meta_box['fields']['_ctc_event_recurrence']['options'];
+		
 		$meta_box['fields']['_ctc_event_recurrence']['options'] = ctc_array_merge_after_key(
 			$options, 
 			array( 'daily' => _x( 'Daily', 'event meta box', 'ctcex' ) ),

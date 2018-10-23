@@ -14,7 +14,7 @@ class CTCEX_CPTNames {
 		if ( ! class_exists( 'Church_Theme_Content' ) ) return;
 		
 		//add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
-		add_action( 'admin_init', array( $this, 'settings_init' ) );
+		//add_action( 'admin_init', array( $this, 'settings_init' ) );
 		
 		// Change slugs in the custom CTC types
 		add_filter( 'ctc_post_type_person_args', array( $this, 'ctcex_post_type_args' ), 10, 1);
@@ -46,14 +46,23 @@ class CTCEX_CPTNames {
 	 * Get new singular/plural names for post types
 	 *
 	 * @since  2.0
-	 * @params string $post_type  Post type
-	 * @params string $form       'singular' or 'plural'
-	 * @params string $default    Default value
+	 * @params string $post_type_slug  Post type slug
+	 * @params string $form            'singular' or 'plural'
+	 * @params string $default         Default value
 	 */
-	function ctcex_post_type_singular_plural( $post_type, $form = 'singular', $default ){
-		$avail_post_types = array( 'sermons', 'events', 'people', 'locations', 'groups', 'sermon-series' );
-		if( in_array( $post_type, $avail_post_types ) ){			
-			return get_option( "ctcex_{$post_type}_{$form}", $form );
+	function ctcex_post_type_singular_plural( $post_type_slug, $form = 'singular', $default ){
+		$avail_post_types = array(
+			'sermons', 
+			'events', 
+			'people', 
+			'locations', 
+			'groups', 
+			'sermon-series' 
+		);
+		//$post_type = array_search( $post_type_slug, $avail_post_types, true );
+		if( in_array($post_type_slug, $avail_post_types, true ) ){
+			//$default_form = ctc_post_type_label( $post_type, $form );
+			return get_option( "ctcex_{$post_type_slug}_{$form}", $default );
 		}
 		return $default;
 	}
@@ -67,12 +76,12 @@ class CTCEX_CPTNames {
 	function ctcex_post_type_args( $args ){
 		// default settings
 		$old_slug = $args['rewrite']['slug'];
-		$old_plural = $arg['labels']['name'];
-		$old_singular = $arg['labels']['singular_name'];
+		$old_plural = $args['labels']['name'];
+		$old_singular = $args['labels']['singular_name'];
 		
 		// New settings
-		$new_singular = ctcex_post_type_singular_plural( $old_slug, 'singular', $old_singular );
-		$new_plural = ctcex_post_type_singular_plural( $old_slug, 'plural', $old_plural );
+		$new_singular = $this->ctcex_post_type_singular_plural( $old_slug, 'singular', $old_singular );
+		$new_plural = $this->ctcex_post_type_singular_plural( $old_slug, 'plural', $old_plural );
 		$new_slug = sanitize_title( $new_plural, $old_slug );
 		
 		$add = sprintf( _x( 'Add %s', 'Add post type', 'ctcex' ), $new_singular );
