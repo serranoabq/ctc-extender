@@ -12,6 +12,7 @@ class CTCEX_Customizer {
 	function __construct(){
 		
 		add_action( 'customize_register', array( $this, 'customize_register' ) );
+		add_action( 'customize_controls_print_footer_scripts', array( $this, 'register_customizer_script' ) );
 		
 	}
 	
@@ -31,6 +32,21 @@ class CTCEX_Customizer {
 			'description'  => __( 'Settings for audio podcast', 'ctcex' ),
 			'panel'        => 'ctcex_options_panel',
 		) );
+		
+		// Description
+		$this->createSetting( $wp_customize, array(
+			'id'           => 'ctcex_podcast_feed',
+			'label'        => __( 'Podcast Feed', 'ctcex' ),
+			'type'         => 'radio',
+			'choices'      => array(
+					'site_feed'   => __( 'Use site feed', 'ctcex' ), 
+					'sermon_feed' => __( 'Use sermon feed', 'ctcex' )  
+				),
+			'description'  => '<code id="ctcex_podcast_url"></code>', 
+			'default'      => 'site_feed',
+			'section'      => 'ctcex_podcast',
+		) );
+		
 		// Description
 		$this->createSetting( $wp_customize, array(
 			'id'           => 'ctcex_podcast_desc',
@@ -73,7 +89,7 @@ class CTCEX_Customizer {
 			'label'             => __( 'Sermon Plural', 'ctcex' ),
 			'description'       => sprintf( '<code>%s</code>', ctc_make_url_slug_bold( sanitize_title( ctc_post_type_label( 'ctc_sermon', 'plural' ) ) ) ),
 			'default'           => ctc_post_type_label( 'ctc_sermon', 'plural' ),
-			'sanitize_callback' => $this->sanitize_names,
+			'sanitize_callback' => array( $this, 'sanitize_names' ),
 			'section'           => 'ctcex_names',
 		) );
 		$this->createSetting( $wp_customize, array(
@@ -371,6 +387,25 @@ class CTCEX_Customizer {
 			return $name;
 		}
 		return false;
+	}
+	
+	function register_customizer_script(){
+		?>
+		<script>
+			jQuery( document ).ready( function($) {
+				var api = wp.customize;
+				var feed= { 
+					'site_feed' : '<?php bloginfo( 'rss2_url' ); ?>',
+					'sermon_feed' : '<?php echo ctcex_get_post_type_archive_url( 'ctc_sermon' ) . 'feed/'; ?>'
+				}; 
+				
+				$('code#ctcex_podcast_url').text( feed[ $( 'input[name="_customize-radio-ctcex_podcast_feed"]:checked' ).val() ] );
+				$( 'input[name="_customize-radio-ctcex_podcast_feed"]' ).change( function() {
+					$('code#ctcex_podcast_url').text( feed[ $(this).val() ] );
+				});
+			});
+		</script>
+		<?php 
 	}
 	
 }

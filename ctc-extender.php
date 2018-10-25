@@ -11,6 +11,8 @@ if ( !defined( 'ABSPATH' ) ) exit;
 
 global $CTCEX;
 
+define( 'CTCEX_VERSION' ) = '2.0b';
+
 if( ! class_exists( 'CTC_Extender' ) ) {
 	require_once( sprintf( "%s/ctc-extender-class.php", dirname(__FILE__) ) );
 	$CTCEX = new CTC_Extender();
@@ -79,8 +81,8 @@ function ctcex_get_group_data( $post_id ){
 }
 
 // Get data
-// @param string $post_obj Post object to retrieve the recurrence note for
-// @return string Recurrence note
+// @param  string  $post_obj    Post object to retrieve the recurrence note for
+// @return string               Recurrence note
 function ctcex_get_recurrence_note( $post_obj ){
 	global $CTCEX;
 	if( $CTCEX ) return $CTCEX->get_recurrence_note( $post_obj ); 
@@ -93,9 +95,9 @@ function ctcex_update_recurring_events(){
 }
 
 // Get option data
-// @param string $option Name of option to retrieve value
-// @param string $default Default value to return if option is not found
-// @return string Value of option or default value if not found
+// @param string   $option   Name of option to retrieve value
+// @param string   $default  Default value to return if option is not found
+// @return string            Value of option or default value if not found
 function ctcex_get_option( $option, $default = '' ){
 	$options = get_option( 'ctcex_settings' );
 	if( isset( $options[ $option ] ) )
@@ -115,12 +117,18 @@ function ctcex_has_option( $option ) {
 	return array_key_exists( $option, $options );
 }
 
+/**
+ * Retrieve the url of a taxonomy image
+ *
+ * @param  mixed  $term_id      ID of taxonomy term to get image of
+ * @return string               URL of taxonomy image
+ */
 function ctcex_tax_img_url( $term_id = NULL ) {
 	
 	// Check if the taxonomy archive is being displayed
 	if( is_tax() ) {	
-		$tax = get_query_var('taxonomy' );
-		$term = get_query_var('term' );
+		$tax = get_query_var( 'taxonomy' );
+		$term = get_query_var( 'term' );
 		$current_term = get_term_by( 'slug', $term, $tax );
 		$term_id = $current_term->term_id;
 	} else {
@@ -134,44 +142,10 @@ function ctcex_tax_img_url( $term_id = NULL ) {
 	
 	if( $tax ){
 		$imgsrc = call_user_func( array( 'CTCEX_TaxImages', 'get_tax_image' ), $tax, $term_id );
-		$imgsrc = apply_filters( 'ctcex_tax_img_url_filter', $imgsrc, $term_id );
+		$imgsrc = apply_filters( 'ctcex_tax_img_url', $imgsrc, $term_id );
 		return $imgsrc;
 	}
 
 	return;
 	
-}
-
-add_filter( 'ctcex_translate', 'ctcex_customTranslate', 10, 2 );
-function ctcex_customTranslate( $option, $default ) {
-	// This is meant to be used with a plugin like Loco Translate that allows you to change
-	// theme/plugin translations after the fact
-	// After installing plugin, use Loco Translate to create translations for the 
-	// new names given in the main interface. 
-	
-	// INPUT: $option - the 'filtered value', but it's really the option name
-	//        $default - default value in case it's not one of the specific names
-	$out = $default; 
-	switch ( $option ) {
-		case 'ctc-sermons':
-			$out = _x( 'ctc-sermons', 'Custom translation for CPT name. Use Plural/Singular format', 'ctcex' );
-			break;
-		case 'ctc-sermon-series':
-			$out = _x( 'ctc-sermon-series', 'Custom translation for CPT name. Use Plural/Singular format', 'ctcex' );
-			break;
-		case 'ctc-sermon-topic':
-			$out = _x( 'ctc-sermon-topic', 'Custom translation for CPT name. Use Plural/Singular format', 'ctcex' );
-			break;
-		case 'ctc-locations':
-			$out = _x( 'ctc-locations', 'Custom translation for CPT name. Use Plural/Singular format', 'ctcex' );
-			break;
-		case 'ctc-events':
-			$out = _x( 'ctc-events', 'Custom translation for CPT name. Use Plural/Singular format', 'ctcex' );
-			break;
-		case 'ctc-people':
-			$out = _x( 'ctc-people', 'Custom translation for CPT name. Use Plural/Singular format', 'ctcex' );
-			break;
-	}
-	if ( $out == $option ) $out = $default;
-	return $out;
 }
